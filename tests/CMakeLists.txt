@@ -8,7 +8,13 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 # Adds Catch2::Catch2
 
+add_executable(canvas_feature canvas_feature.cpp)
+target_compile_features(canvas_feature PRIVATE cxx_std_20)
+target_link_libraries(canvas_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME canvas_feature COMMAND canvas_feature)
+
 add_executable(tuples_feature tuples_feature.cpp)
 target_compile_features(tuples_feature PRIVATE cxx_std_20)
 target_link_libraries(tuples_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME tuples_feature COMMAND tuples_feature)
+

@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file myrtchallenge/tuples.hpp
+ * @file include/myrtchallenge/tuples.hpp
  * @brief Declaration of tuple, point, vector and support functions.
  * @author Brendan Leber <brendan@brendanleber.com>
  * @copyright Copyright 2022 by Brendan Leber.  Some rights reserved, see LICENSE.

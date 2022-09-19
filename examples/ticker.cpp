@@ -1,13 +1,12 @@
 /**
  * @file examples/ticker.cpp
- * @brief Example program showing how to use tuples,
+ * @brief Example program showing how to use tuples.
  * @author Brendan Leber <brendan@brendanleber.com>
  * @copyright Copyright 2022 by Brendan Leber.  Some rights reserved, see LICENSE.
  */
 
 #include <cstdio>
 #include <cstdlib>
-
 
 #include "myrtchallenge/tuples.hpp"
 

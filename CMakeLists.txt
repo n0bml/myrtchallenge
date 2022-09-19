@@ -1,12 +1,29 @@
 # Works with 3.11 and tested through 3.24
 cmake_minimum_required(VERSION 3.11...3.24)
 
+
+# default to Debug builds if this is a local git repository, Release otherwise.
+set(default_build_type "Release")
+if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+  set(default_build_type "Debug")
+endif()
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
+  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
+      STRING "Choose type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+      "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+
 # Project name and a few useful settings. Other commands can pick up the results
 project(
   myrtchallenge
   VERSION 0.1
   DESCRIPTION "My implementation of the ray tracer described in the book The Ray Tracer Challenge by Jamis Buck."
   LANGUAGES CXX)
+
 
 # Only do these if this is the main project, and not if it is included through add_subdirectory
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
