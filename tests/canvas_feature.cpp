@@ -1,5 +1,5 @@
 /**
- * @file tests/canvas.cpp
+ * @file tests/canvas_feature.cpp
  * @brief Tests for canvas and support functions.
  * @author Brendan Leber <brendan@brendanleber.com>
  * @copyright Copyright 2022 by Brendan Leber.  Some rights reserved, see LICENSE.

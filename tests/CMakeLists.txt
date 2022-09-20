@@ -13,6 +13,11 @@ target_compile_features(canvas_feature PRIVATE cxx_std_20)
 target_link_libraries(canvas_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME canvas_feature COMMAND canvas_feature)
 
+add_executable(matrices_feature matrices_feature.cpp)
+target_compile_features(matrices_feature PRIVATE cxx_std_20)
+target_link_libraries(matrices_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME matrices_feature COMMAND matrices_feature)
+
 add_executable(tuples_feature tuples_feature.cpp)
 target_compile_features(tuples_feature PRIVATE cxx_std_20)
 target_link_libraries(tuples_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
