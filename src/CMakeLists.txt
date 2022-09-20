@@ -20,6 +20,7 @@ add_library(myrtchallenge
     canvas.cpp
     colors.cpp
     matrices.cpp
+    transformations.cpp
     tuples.cpp
     ${HEADER_LIST})
 

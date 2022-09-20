@@ -5,8 +5,6 @@
  * @copyright Copyright 2022 by Brendan Leber.  Some rights reserved, see LICENSE.
  */
 
-#include <algorithm>
-
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
 

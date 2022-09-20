@@ -12,6 +12,8 @@
 #include <myrtchallenge/colors.hpp>
 #include <myrtchallenge/tuples.hpp>
 
+#include "catch_helpers.hpp"
+
 
 TEST_CASE("A tuple with w=1.0 is a point.", "[tuples]")
 {
