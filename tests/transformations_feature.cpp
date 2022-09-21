@@ -41,7 +41,7 @@ TEST_CASE("Translation does not affect vectors.", "[transformations]")
 }
 
 
-TEST_CASE("A scaling matrix applied to a point.", "[transformations]")
+TEST_CASE("A scaling matrix applied to a point.", "[scaling]")
 {
     auto transform = scaling(2, 3, 4);
     auto p = point(-4, 6, 8);
@@ -49,7 +49,7 @@ TEST_CASE("A scaling matrix applied to a point.", "[transformations]")
 }
 
 
-TEST_CASE("A scaling matrix applied to a vector.", "[transformations]")
+TEST_CASE("A scaling matrix applied to a vector.", "[scaling]")
 {
     auto transform = scaling(2, 3, 4);
     auto v = vector(-4, 6, 8);
@@ -57,7 +57,7 @@ TEST_CASE("A scaling matrix applied to a vector.", "[transformations]")
 }
 
 
-TEST_CASE("Multiplying by the inverse of a scaling matrix.", "[transformations]")
+TEST_CASE("Multiplying by the inverse of a scaling matrix.", "[scaling]")
 {
     auto transform = scaling(2, 3, 4);
     auto inv = inverse(transform);
@@ -66,7 +66,7 @@ TEST_CASE("Multiplying by the inverse of a scaling matrix.", "[transformations]"
 }
 
 
-TEST_CASE("Reflection is scaling by a negative value.", "[transformations]")
+TEST_CASE("Reflection is scaling by a negative value.", "[scaling]")
 {
     auto transform = scaling(-1, 1, 1);
     auto p = point(2, 3, 4);
@@ -74,7 +74,7 @@ TEST_CASE("Reflection is scaling by a negative value.", "[transformations]")
 }
 
 
-TEST_CASE("Rotating a point around the x axis.", "[transformations]")
+TEST_CASE("Rotating a point around the x axis.", "[rotations]")
 {
     auto p = point(0, 1, 0);
     auto half_quarter = rotation_x(M_PI_4);
@@ -84,7 +84,7 @@ TEST_CASE("Rotating a point around the x axis.", "[transformations]")
 }
 
 
-TEST_CASE("The inverse of an x-rotation rotates in the opposite direction.", "[transformations]")
+TEST_CASE("The inverse of an x-rotation rotates in the opposite direction.", "[rotations]")
 {
     auto p = point(0, 1, 0);
     auto half_quarter = rotation_x(M_PI_4);
@@ -93,7 +93,7 @@ TEST_CASE("The inverse of an x-rotation rotates in the opposite direction.", "[t
 }
 
 
-TEST_CASE("Rotating a point around the y axis.", "[transformations]")
+TEST_CASE("Rotating a point around the y axis.", "[rotations]")
 {
     auto p = point(0, 0, 1);
     auto half_quarter = rotation_y(M_PI_4);
@@ -103,7 +103,7 @@ TEST_CASE("Rotating a point around the y axis.", "[transformations]")
 }
 
 
-TEST_CASE("Rotation a point around the z axis.", "[transformations]")
+TEST_CASE("Rotation a point around the z axis.", "[rotations]")
 {
     auto p = point(0, 1, 0);
     auto half_quarter = rotation_z(M_PI_4);
@@ -113,7 +113,7 @@ TEST_CASE("Rotation a point around the z axis.", "[transformations]")
 }
 
 
-TEST_CASE("A shearing transformation moves x in proportion to y.", "[transformations]")
+TEST_CASE("A shearing transformation moves x in proportion to y.", "[shearing]")
 {
     auto transform = shearing(1, 0, 0, 0, 0, 0);
     auto p = point(2, 3, 4);
@@ -121,7 +121,7 @@ TEST_CASE("A shearing transformation moves x in proportion to y.", "[transformat
 }
 
 
-TEST_CASE("A shearing transformation moves x in proportion to z.", "[transformations]")
+TEST_CASE("A shearing transformation moves x in proportion to z.", "[shearing]")
 {
     auto transform = shearing(0, 1, 0, 0, 0, 0);
     auto p = point(2, 3, 4);
@@ -129,7 +129,7 @@ TEST_CASE("A shearing transformation moves x in proportion to z.", "[transformat
 }
 
 
-TEST_CASE("A shearing transformation moves y in proportion to x.", "[transformations]")
+TEST_CASE("A shearing transformation moves y in proportion to x.", "[shearing]")
 {
     auto transform = shearing(0, 0, 1, 0, 0, 0);
     auto p = point(2, 3, 4);
@@ -137,7 +137,7 @@ TEST_CASE("A shearing transformation moves y in proportion to x.", "[transformat
 }
 
 
-TEST_CASE("A shearing transformation moves y in proportion to z.", "[transformations]")
+TEST_CASE("A shearing transformation moves y in proportion to z.", "[shearing]")
 {
     auto transform = shearing(0, 0, 0, 1, 0, 0);
     auto p = point(2, 3, 4);
@@ -145,7 +145,7 @@ TEST_CASE("A shearing transformation moves y in proportion to z.", "[transformat
 }
 
 
-TEST_CASE("A shearing transformation moves z in proportion to x.", "[transformations]")
+TEST_CASE("A shearing transformation moves z in proportion to x.", "[shearing]")
 {
     auto transform = shearing(0, 0, 0, 0, 1, 0);
     auto p = point(2, 3, 4);
@@ -153,7 +153,7 @@ TEST_CASE("A shearing transformation moves z in proportion to x.", "[transformat
 }
 
 
-TEST_CASE("A shearing transformation moves z in proportion to y.", "[transformations]")
+TEST_CASE("A shearing transformation moves z in proportion to y.", "[shearing]")
 {
     auto transform = shearing(0, 0, 0, 0, 0, 1);
     auto p = point(2, 3, 4);

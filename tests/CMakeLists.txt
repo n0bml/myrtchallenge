@@ -13,10 +13,25 @@ target_compile_features(canvas_feature PRIVATE cxx_std_20)
 target_link_libraries(canvas_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME canvas_feature COMMAND canvas_feature)
 
+add_executable(intersections_feature intersections_feature.cpp)
+target_compile_features(intersections_feature PRIVATE cxx_std_20)
+target_link_libraries(intersections_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME intersections_feature COMMAND intersections_feature)
+
 add_executable(matrices_feature matrices_feature.cpp)
 target_compile_features(matrices_feature PRIVATE cxx_std_20)
 target_link_libraries(matrices_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME matrices_feature COMMAND matrices_feature)
+
+add_executable(rays_feature rays_feature.cpp)
+target_compile_features(rays_feature PRIVATE cxx_std_20)
+target_link_libraries(rays_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME rays_feature COMMAND rays_feature)
+
+add_executable(spheres_feature spheres_feature.cpp)
+target_compile_features(spheres_feature PRIVATE cxx_std_20)
+target_link_libraries(spheres_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME spheres_feature COMMAND spheres_feature)
 
 add_executable(transformations_feature transformations_feature.cpp)
 target_compile_features(transformations_feature PRIVATE cxx_std_20)

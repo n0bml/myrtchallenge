@@ -23,7 +23,7 @@ TEST_CASE("A tuple with w=1.0 is a point.", "[tuples]")
     REQUIRE(a.z == 3.1);
     REQUIRE(a.w == 1.0);
     REQUIRE(a.is_point());
-    REQUIRE(!a.is_vector());
+    REQUIRE_FALSE(a.is_vector());
 }
 
 
@@ -34,7 +34,7 @@ TEST_CASE("A tuple with w=0.0 is a vector.", "[tuples]")
     REQUIRE(a.y == -4.2);
     REQUIRE(a.z == 3.1);
     REQUIRE(a.w == 0.0);
-    REQUIRE(!a.is_point());
+    REQUIRE_FALSE(a.is_point());
     REQUIRE(a.is_vector());
 }
 

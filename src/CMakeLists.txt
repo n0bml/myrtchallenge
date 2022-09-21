@@ -19,7 +19,10 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${myrtchallenge_SOURCE_DIR}/include/myr
 add_library(myrtchallenge
     canvas.cpp
     colors.cpp
+    intersections.cpp
     matrices.cpp
+    rays.cpp
+    spheres.cpp
     transformations.cpp
     tuples.cpp
     ${HEADER_LIST})

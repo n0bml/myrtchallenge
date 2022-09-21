@@ -13,6 +13,11 @@ target_include_directories(analog PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(analog PRIVATE ${LIBPNG_LIBRARY_DIRS})
 target_link_libraries(analog PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
 
+add_executable(casting casting.cpp)
+target_include_directories(casting PRIVATE ${LIBPNG_INCLUDE_DIRS})
+target_link_directories(casting PRIVATE ${LIBPNG_LIBRARY_DIRS})
+target_link_libraries(casting PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
+
 add_executable(projectile projectile.cpp)
 target_include_directories(projectile PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(projectile PRIVATE ${LIBPNG_LIBRARY_DIRS})
