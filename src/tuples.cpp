@@ -22,15 +22,15 @@ bool Tuple::operator!=(const Tuple& rhs) const
 }
 
 
-Tuple tuple(double_t x, double_t y, double_t z, double_t w)
-{
-    return Tuple{x, y, z, w};
-}
-
-
 Tuple point(double_t x, double_t y, double_t z)
 {
     return tuple(x, y, z, 1);
+}
+
+
+Tuple tuple(double_t x, double_t y, double_t z, double_t w)
+{
+    return Tuple{x, y, z, w};
 }
 
 
@@ -102,4 +102,9 @@ Tuple normalize(const Tuple& tpl)
 {
     auto mag = magnitude(tpl);
     return tuple(tpl.x / mag, tpl.y / mag, tpl.z / mag, tpl.w / mag);
+}
+
+Tuple reflect(const Tuple& in, const Tuple& normal)
+{
+    return in - normal * 2 * dot(in, normal);
 }

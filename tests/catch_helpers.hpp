@@ -6,7 +6,10 @@
  */
 
 #include <ostream>
+
+#include <myrtchallenge/colors.hpp>
 #include <myrtchallenge/tuples.hpp>
+
 
 inline std::ostream& operator<<(std::ostream& os, const Tuple& value)
 {
@@ -18,3 +21,9 @@ inline std::ostream& operator<<(std::ostream& os, const Tuple& value)
     return os;
 }
 
+
+inline std::ostream& operator<<(std::ostream& os, const Color& color)
+{
+    os << "color(" << color.red << ", " << color.green << ", " << color.blue << ')';
+    return os;
+}

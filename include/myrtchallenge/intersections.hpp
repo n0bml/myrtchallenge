@@ -17,13 +17,13 @@
 
 
 struct Sphere;
-using SpherePtr = std::shared_ptr<Sphere>;
+using Sphere_Ptr = std::shared_ptr<Sphere>;
 
 
 struct Intersection
 {
     double_t t;
-    SpherePtr object;
+    Sphere_Ptr object;
 
     bool operator<(const Intersection& rhs) const;
     bool operator==(const Intersection& rhs) const;
@@ -35,5 +35,5 @@ struct Intersection
 using Intersections = std::vector<Intersection>;
 
 Intersection hit(const Intersections& is);
-Intersection intersection(double_t t, SpherePtr object);
+Intersection intersection(double_t t, Sphere_Ptr object);
 Intersections intersections(const Intersections& is);

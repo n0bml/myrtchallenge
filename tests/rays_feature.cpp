@@ -36,21 +36,41 @@ TEST_CASE("Computing a point from a distance.", "[rays]")
 }
 
 
-TEST_CASE("Translating a ray.", "[rays]")
+SCENARIO("Translating a ray.", "[rays]")
 {
-    auto r = ray(point(1, 2, 3), vector(0, 1, 0));
-    auto m = translation(3, 4, 5);
-    auto r2 = transform(r, m);
-    REQUIRE(r2.origin == point(4, 6, 8));
-    REQUIRE(r2.direction == vector(0, 1, 0));
+    GIVEN("r <- ray(point(1, 2, 3), vector(0, 1, 0))") {
+        auto r = ray(point(1, 2, 3), vector(0, 1, 0));
+        AND_GIVEN("m <- translation(3, 4, 5)") {
+            auto m = translation(3, 4, 5);
+            WHEN("r2 <- transform(r, m)") {
+                auto r2 = transform(r, m);
+                THEN("r2.origin = point(4, 6, 8)") {
+                    REQUIRE(r2.origin == point(4, 6, 8));
+                    AND_THEN("r2.direction = vector(0, 1, 0)") {
+                        REQUIRE(r2.direction == vector(0, 1, 0));
+                    }
+                }
+            }
+        }
+    }
 }
 
 
-TEST_CASE("Scaling a ray.", "[rays]")
+SCENARIO("Scaling a ray.", "[rays]")
 {
-    auto r = ray(point(1, 2, 3), vector(0, 1, 0));
-    auto m = scaling(2, 3, 4);
-    auto r2 = transform(r, m);
-    REQUIRE(r2.origin == point(2, 6, 12));
-    REQUIRE(r2.direction == vector(0, 3, 0));
+    GIVEN("r <- ray(point(1, 2, 3), vector(0, 1, 0))") {
+        auto r = ray(point(1, 2, 3), vector(0, 1, 0));
+        AND_GIVEN("m <- scaling(2, 3, 4)") {
+            auto m = scaling(2, 3, 4);
+            WHEN("r2 <- transform(r, m)") {
+                auto r2 = transform(r, m);
+                THEN("r2.origin = point(2, 6, 12)") {
+                    REQUIRE(r2.origin == point(2, 6, 12));
+                    AND_THEN("r2.direction = vector(0, 3, 0)") {
+                        REQUIRE(r2.direction == vector(0, 3, 0));
+                    }
+                }
+            }
+        }
+    }
 }

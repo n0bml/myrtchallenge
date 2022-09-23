@@ -27,3 +27,5 @@ Color operator+(const Color& lhs, const Color& rhs);
 Color operator-(const Color& lhs, const Color& rhs);
 Color operator*(const Color& lhs, const Color& rhs);
 Color operator*(const Color& lhs, double_t rhs);
+
+Color normalize(Color c);

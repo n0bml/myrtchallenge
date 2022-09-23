@@ -36,7 +36,7 @@ Intersection hit(const Intersections& is)
 }
 
 
-Intersection intersection(double_t t, SpherePtr object)
+Intersection intersection(double_t t, Sphere_Ptr object)
 {
     return Intersection{t, object};
 }

@@ -18,6 +18,16 @@ target_compile_features(intersections_feature PRIVATE cxx_std_20)
 target_link_libraries(intersections_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME intersections_feature COMMAND intersections_feature)
 
+add_executable(lights_feature lights_feature.cpp)
+target_compile_features(lights_feature PRIVATE cxx_std_20)
+target_link_libraries(lights_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME lights_feature COMMAND lights_feature)
+
+add_executable(materials_feature materials_feature.cpp)
+target_compile_features(materials_feature PRIVATE cxx_std_20)
+target_link_libraries(materials_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME materials_feature COMMAND materials_feature)
+
 add_executable(matrices_feature matrices_feature.cpp)
 target_compile_features(matrices_feature PRIVATE cxx_std_20)
 target_link_libraries(matrices_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)

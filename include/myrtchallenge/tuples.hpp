@@ -28,8 +28,8 @@ struct Tuple
 };
 
 
-Tuple tuple(double_t x, double_t y, double_t z, double_t w);
 Tuple point(double_t x, double_t y, double_t z);
+Tuple tuple(double_t x, double_t y, double_t z, double_t w);
 Tuple vector(double_t x, double_t y, double_t z);
 
 Tuple operator-(const Tuple& lhs);
@@ -40,7 +40,8 @@ Tuple operator-(const Tuple& lhs, const Tuple& rhs);
 Tuple operator*(const Tuple& lhs, double_t rhs);
 Tuple operator/(const Tuple& lhs, double_t rhs);
 
-Tuple cross(const Tuple& lhs, const Tuple& rhs);
 double_t dot(const Tuple& lhs, const Tuple& rhs);
-double_t magnitude(const Tuple& tpl);
+Tuple cross(const Tuple& lhs, const Tuple& rhs);
 Tuple normalize(const Tuple& tpl);
+double_t magnitude(const Tuple& tpl);
+Tuple reflect(const Tuple& in, const Tuple& normal);

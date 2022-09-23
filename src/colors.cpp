@@ -51,3 +51,11 @@ Color operator*(const Color& lhs, double_t rhs)
     return color(lhs.red * rhs, lhs.green * rhs, lhs.blue * rhs);
 }
 
+
+Color normalize(Color c)
+{
+    c.red   = (c.red   < 0) ? 0 : (c.red   > 1) ? 1 : c.red;
+    c.green = (c.green < 0) ? 0 : (c.green > 1) ? 1 : c.green;
+    c.blue  = (c.blue  < 0) ? 0 : (c.blue  > 1) ? 1 : c.blue;
+    return c;
+}

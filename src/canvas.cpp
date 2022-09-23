@@ -32,7 +32,7 @@ void canvas_to_png(const Canvas& canvas, std::string const& file_name)
     for (size_t row = 0; row < canvas.height; ++row) {
         size_t col, off;
         for (col = 0, off = 0; col < canvas.width; ++col, off += 3) {
-            auto pixel = pixel_at(canvas, col, row);
+            auto pixel = normalize(pixel_at(canvas, col, row));
             row_pointers[row][off + 0] = static_cast<png_byte>(std::ceil(pixel.red   * 255.0));
             row_pointers[row][off + 1] = static_cast<png_byte>(std::ceil(pixel.green * 255.0));
             row_pointers[row][off + 2] = static_cast<png_byte>(std::ceil(pixel.blue  * 255.0));

@@ -20,6 +20,8 @@ add_library(myrtchallenge
     canvas.cpp
     colors.cpp
     intersections.cpp
+    lights.cpp
+    materials.cpp
     matrices.cpp
     rays.cpp
     spheres.cpp

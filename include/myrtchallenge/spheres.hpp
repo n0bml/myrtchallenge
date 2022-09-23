@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "myrtchallenge/intersections.hpp"
+#include "myrtchallenge/materials.hpp"
 #include "myrtchallenge/matrices.hpp"
 #include "myrtchallenge/rays.hpp"
 
@@ -19,14 +20,16 @@
 struct Sphere
 {
     Matrix transform;
+    Material_Ptr material;
 };
 
 
-using SpherePtr = std::shared_ptr<Sphere>;
+using Sphere_Ptr = std::shared_ptr<Sphere>;
 
 
-SpherePtr sphere();
+Sphere_Ptr sphere();
 
 
-Intersections intersect(SpherePtr sphere, const Ray& ray);
-void set_transform(SpherePtr sphere, const Matrix& m);
+Intersections intersect(Sphere_Ptr sphere, const Ray& ray);
+Tuple normal_at(Sphere_Ptr sphere, const Tuple& world_point);
+void set_transform(Sphere_Ptr sphere, const Matrix& m);
