@@ -8,6 +8,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 # Adds Catch2::Catch2
 
+add_executable(camera_feature camera_feature.cpp)
+target_compile_features(camera_feature PRIVATE cxx_std_20)
+target_link_libraries(camera_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME camera_feature COMMAND camera_feature)
+
 add_executable(canvas_feature canvas_feature.cpp)
 target_compile_features(canvas_feature PRIVATE cxx_std_20)
 target_link_libraries(canvas_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
@@ -53,3 +58,7 @@ target_compile_features(tuples_feature PRIVATE cxx_std_20)
 target_link_libraries(tuples_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME tuples_feature COMMAND tuples_feature)
 
+add_executable(world_feature world_feature.cpp)
+target_compile_features(world_feature PRIVATE cxx_std_20)
+target_link_libraries(world_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME world_feature COMMAND world_feature)

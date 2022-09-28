@@ -73,3 +73,21 @@ Matrix translation(double_t x, double_t y, double_t z)
     t(2, 3) = z;
     return t;
 }
+
+
+Matrix view_transform(const Tuple& from, const Tuple& to, const Tuple& up)
+{
+    auto forward = normalize(to - from);
+    auto upn = normalize(up);
+    auto left = cross(forward, upn);
+    auto true_up = cross(left, forward);
+
+    auto orientation = matrix(4, {
+         left.x,     left.y,     left.z,    0,
+         true_up.x,  true_up.y,  true_up.z, 0,
+        -forward.x, -forward.y, -forward.z, 0,
+         0,          0,          0,         1,
+    });
+
+    return orientation * translation(-from.x, -from.y, -from.z);
+}

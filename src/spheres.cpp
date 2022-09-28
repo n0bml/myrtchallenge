@@ -11,6 +11,17 @@
 
 #include "primitives.hpp"
 
+bool Sphere::operator==(const Sphere& rhs) const
+{
+    if (transform != rhs.transform) {
+        return false;
+    }
+    if (*material != *rhs.material) {
+        return false;
+    }
+    return true;
+}
+
 
 Sphere_Ptr sphere()
 {

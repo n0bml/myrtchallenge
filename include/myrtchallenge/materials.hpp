@@ -23,6 +23,7 @@ struct Material
     double_t shininess;
 
     bool operator==(const Material& rhs) const;
+    bool operator!=(const Material& rhs) const;
 };
 
 

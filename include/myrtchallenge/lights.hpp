@@ -19,7 +19,7 @@ struct Point_Light
     Color intensity;
 
     //Point_Light& operator=(const Point_Light& other);
-    //bool operator==(const Point_Light& rhs) const;
+    bool operator==(const Point_Light& rhs) const;
 };
 
 

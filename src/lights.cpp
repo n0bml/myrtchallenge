@@ -21,17 +21,17 @@ Point_Light& Point_Light::operator=(const Point_Light& other)
     }
     return *this;
 }
+#endif
 
 
 bool Point_Light::operator==(const Point_Light& rhs) const
 {
     if (position != rhs.position)
         return false;
-    if (!(intensity == rhs.intensity))
+    if (intensity != rhs.intensity)
         return false;
     return true;
 }
-#endif
 
 
 Point_Light_Ptr point_light(const Tuple& position, const Color& intensity)

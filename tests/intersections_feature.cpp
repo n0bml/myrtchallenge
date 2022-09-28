@@ -155,3 +155,75 @@ SCENARIO("The hit is always the lowest non-negative intersection.", "[intersecti
         }
     }
 }
+
+
+SCENARIO("Precomputing the state of an intersection.", "[intersections]") {
+    GIVEN("r <- ray(point(0, 0, -5), vector(0, 0, 1)") {
+        auto r = ray(point(0, 0, -5), vector(0, 0, 1));
+        AND_GIVEN("shape <- sphere()") {
+            auto shape = sphere();
+            AND_GIVEN("i <- intersection(4, shape)") {
+                auto i = intersection(4, shape);
+                WHEN("comps <- prepare_computations(i, r)") {
+                    auto comps = prepare_computations(i, r);
+                    THEN("comps.t = i.t") {
+                        REQUIRE(comps.t == i.t);
+                        AND_THEN("comps.object = i.object") {
+                            REQUIRE(comps.object == i.object);
+                            AND_THEN("comps.point = point(0, 0, -1)") {
+                                REQUIRE(comps.point == point(0, 0, -1));
+                                AND_THEN("comps.eyev = vector(0, 0, -1)") {
+                                    REQUIRE(comps.eyev == vector(0, 0, -1));
+                                    AND_THEN("comps.normalv = vector(0, 0, -1)") {
+                                        REQUIRE(comps.normalv == vector(0, 0, -1));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The hit, when an intersection occurs on the outside.", "[intersections]") {
+    GIVEN("r <- ray(point(0, 0, -5), vector(0, 0, 1))") {
+        auto r = ray(point(0, 0, -5), vector(0, 0, 1));
+        AND_GIVEN("shape <- sphere()") {
+            auto shape = sphere();
+            AND_GIVEN("i <- intersection(4, shape)") {
+                auto i = intersection(4, shape);
+                WHEN("comps <- prepare_computations(i, r)") {
+                    auto comps = prepare_computations(i, r);
+                    THEN("comps.inside = false") {
+                        REQUIRE(comps.inside == false);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The hit, when an intersection occurs on the inside.", "[intersections]") {
+    GIVEN("r <- ray(point(0, 0, 0), vector(0, 0, 1))") {
+        auto r = ray(point(0, 0, 0), vector(0, 0, 1));
+        AND_GIVEN("shape <- sphere()") {
+            auto shape = sphere();
+            AND_GIVEN("i <- intersection(1, shape)") {
+                auto i = intersection(1, shape);
+                WHEN("comps <- prepare_computations(i, r)") {
+                    auto comps = prepare_computations(i, r);
+                    THEN("comps.point = point(0, 0, 1)") {
+                        REQUIRE(comps.point == point(0, 0, 1));
+                        AND_THEN("comps.inside = true") {
+                            REQUIRE(comps.inside == true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

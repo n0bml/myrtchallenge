@@ -19,3 +19,4 @@ Matrix rotation_z(double_t rad);
 Matrix scaling(double_t x, double_t y, double_t z);
 Matrix shearing(double_t xy, double_t xz, double_t yx, double_t yz, double_t zx, double_t zy);
 Matrix translation(double_t x, double_t y, double_t z);
+Matrix view_transform(const Tuple& from, const Tuple& to, const Tuple& up);

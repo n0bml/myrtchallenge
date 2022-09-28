@@ -48,3 +48,27 @@ Intersections intersections(const Intersections& is)
     std::sort(std::begin(results), std::end(results));
     return results;
 }
+
+
+Computations prepare_computations(const Intersection& i, const Ray& ray)
+{
+    Computations comps;
+
+    // copy the intersection's properties, for convenience
+    comps.t      = i.t;
+    comps.object = i.object;
+
+    // precompute some useful values
+    comps.point   = position(ray, comps.t);
+    comps.eyev    = -ray.direction;
+    comps.normalv = normal_at(comps.object, comps.point);
+
+    if (dot(comps.normalv, comps.eyev) < 0) {
+        comps.inside  = true;
+        comps.normalv = -comps.normalv;
+    }
+    else
+        comps.inside = false;
+
+    return comps;
+}

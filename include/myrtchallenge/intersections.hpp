@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "myrtchallenge/rays.hpp"
-//#include "myrtchallenge/spheres.hpp"
 
 
 struct Sphere;
@@ -37,3 +36,17 @@ using Intersections = std::vector<Intersection>;
 Intersection hit(const Intersections& is);
 Intersection intersection(double_t t, Sphere_Ptr object);
 Intersections intersections(const Intersections& is);
+
+
+struct Computations
+{
+    double_t t;
+    Sphere_Ptr object;
+    Tuple point;
+    Tuple eyev;
+    Tuple normalv;
+    bool inside;
+};
+
+
+Computations prepare_computations(const Intersection& i, const Ray& ray);

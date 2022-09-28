@@ -343,3 +343,85 @@ SCENARIO("Chained transformations must be applied in reverse order.", "[transfor
         }
     }
 }
+
+
+SCENARIO("The transformation matrix for the default orientation.", "[transformations]") {
+    GIVEN("from <- point(0, 0, 0)") {
+        auto from = point(0, 0, 0);
+        AND_GIVEN("to <- point(0, 0, -1)") {
+            auto to = point(0, 0, -1);
+            AND_GIVEN("up <- vector(0, 1, 0)") {
+                auto up = vector(0, 1, 0);
+                WHEN("t <- view_transform(from, to, up)") {
+                    auto t = view_transform(from, to, up);
+                    THEN("t = identity_matrix") {
+                        REQUIRE(t == identity_matrix());
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("A view transformation matrix lokoing in positive z direction.", "[transformations]") {
+    GIVEN("from <- point(0, 0, 0)") {
+        auto from = point(0, 0, 0);
+        AND_GIVEN("to <- point(0, 0, 1)") {
+            auto to = point(0, 0, 1);
+            AND_GIVEN("up <- vector(0, 1, 0)") {
+                auto up = vector(0, 1, 0);
+                WHEN("t <- view_transform(from, to, up)") {
+                    auto t = view_transform(from, to, up);
+                    THEN("t = scaling(-1, 1, -1") {
+                        REQUIRE(t == scaling(-1, 1, -1));
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The view transformation moves the world.", "[transformations]") {
+    GIVEN("from <- point(0, 0, 8)") {
+        auto from = point(0, 0, 8);
+        AND_GIVEN("to <- point(0, 0, 0)") {
+            auto to = point(0, 0, 0);
+            AND_GIVEN("up <- vector(0, 1, 0)") {
+                auto up = vector(0, 1, 0);
+                WHEN("t <- view_transform(from, to, up)") {
+                    auto t = view_transform(from, to, up);
+                    THEN("t = translation(0, 0, -8)") {
+                        REQUIRE(t == translation(0, 0, -8));
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("An arbitrary view transformation.", "[transformations]") {
+    GIVEN("from <- point(1, 3, 2)") {
+        auto from = point(1, 3, 2);
+        AND_GIVEN("to <- point(4, -2, 8)") {
+            auto to = point(4, -2, 8);
+            AND_GIVEN("up <- vector(1, 1, 0)") {
+                auto up = vector(1, 1, 0);
+                WHEN("t <- view_transform(from, to, up") {
+                    auto t = view_transform(from, to, up);
+                    THEN("t is the following 4x4 matrix.") {
+                        auto m = matrix(4, {
+                            -0.50709,  0.50709,  0.67612, -2.36643,
+                             0.76772,  0.60609,  0.12122, -2.82843,
+                            -0.35857,  0.59761, -0.71714,  0.00000,
+                             0.00000,  0.00000,  0.00000,  1.00000,
+                        });
+                        REQUIRE(t == m);
+                    }
+                }
+            }
+        }
+    }
+}

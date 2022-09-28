@@ -21,6 +21,8 @@ struct Sphere
 {
     Matrix transform;
     Material_Ptr material;
+
+    bool operator==(const Sphere& rhs) const;
 };
 
 

@@ -17,17 +17,28 @@
 
 bool Material::operator==(const Material& rhs) const
 {
-    if (!(color == rhs.color))
+    if (!(color == rhs.color)) {
         return false;
-    if (!equal(ambient, rhs.ambient))
+    }
+    if (!equal(ambient, rhs.ambient)) {
         return false;
-    if (!equal(diffuse, rhs.diffuse))
+    }
+    if (!equal(diffuse, rhs.diffuse)) {
         return false;
-    if (!equal(specular, rhs.specular))
+    }
+    if (!equal(specular, rhs.specular)) {
         return false;
-    if (!equal(shininess, rhs.shininess))
+    }
+    if (!equal(shininess, rhs.shininess)) {
         return false;
+    }
     return true;
+}
+
+
+bool Material::operator!=(const Material& rhs) const
+{
+    return !(*this == rhs);
 }
 
 
