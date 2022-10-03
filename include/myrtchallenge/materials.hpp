@@ -33,4 +33,4 @@ using Material_Ptr = std::shared_ptr<Material>;
 Material_Ptr material();
 
 
-Color lighting(const Material_Ptr material, const Point_Light_Ptr light, const Tuple& position, const Tuple& eyev, const Tuple& normalv);
+Color lighting(const Material_Ptr material, const Point_Light_Ptr light, const Tuple& position, const Tuple& eyev, const Tuple& normalv, bool in_shadow);

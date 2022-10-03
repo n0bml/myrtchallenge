@@ -23,6 +23,11 @@ target_include_directories(projectile PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(projectile PRIVATE ${LIBPNG_LIBRARY_DIRS})
 target_link_libraries(projectile PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
 
+add_executable(puppets puppets.cpp)
+target_include_directories(puppets PRIVATE ${LIBPNG_INCLUDE_DIRS})
+target_link_directories(puppets PRIVATE ${LIBPNG_LIBRARY_DIRS})
+target_link_libraries(puppets PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
+
 add_executable(scene scene.cpp)
 target_include_directories(scene PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(scene PRIVATE ${LIBPNG_LIBRARY_DIRS})

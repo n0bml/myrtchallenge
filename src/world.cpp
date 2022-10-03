@@ -62,7 +62,24 @@ Intersections intersect_world(const World_Ptr& world, const Ray& ray)
 }
 
 
+bool is_shadowed(const World_Ptr& world, const Tuple& point)
+{
+    auto v = world->light->position - point;
+    auto distance = magnitude(v);
+    auto direction = normalize(v);
+
+    auto r = ray(point, direction);
+    auto xs = intersect_world(world, r);
+
+    auto h = hit(xs);
+    if (h.hit() && h.t < distance)
+        return true;
+    return false;
+}
+
+
 Color shade_hit(const World_Ptr& world, const Computations& comps)
 {
-    return lighting(comps.object->material, world->light, comps.point, comps.eyev, comps.normalv);
+    auto shadowed = is_shadowed(world, comps.over_point);
+    return lighting(comps.object->material, world->light, comps.point, comps.eyev, comps.normalv, shadowed);
 }

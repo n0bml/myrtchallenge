@@ -32,4 +32,5 @@ World_Ptr default_world();
 
 Color color_at(const World_Ptr& world, const Ray& ray);
 Intersections intersect_world(const World_Ptr& world, const Ray& ray);
+bool is_shadowed(const World_Ptr& world, const Tuple& point);
 Color shade_hit(const World_Ptr& world, const Computations& comps);

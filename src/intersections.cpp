@@ -70,5 +70,7 @@ Computations prepare_computations(const Intersection& i, const Ray& ray)
     else
         comps.inside = false;
 
+    comps.over_point = comps.point + comps.normalv * EPSILON;
+
     return comps;
 }

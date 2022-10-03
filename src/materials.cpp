@@ -54,7 +54,7 @@ Material_Ptr material()
 }
 
 
-Color lighting(const Material_Ptr material, const Point_Light_Ptr light, const Tuple& point, const Tuple& eyev, const Tuple& normalv)
+Color lighting(const Material_Ptr material, const Point_Light_Ptr light, const Tuple& point, const Tuple& eyev, const Tuple& normalv, bool in_shadow)
 {
     // combine the surface color with the light's color/itensity.
     auto effective_color = material->color * light->intensity;
@@ -95,5 +95,7 @@ Color lighting(const Material_Ptr material, const Point_Light_Ptr light, const T
     }
 
     // add the three contributions together to get the final shading
+    if (in_shadow)
+        return ambient;
     return ambient + diffuse + specular;
 }

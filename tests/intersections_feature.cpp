@@ -12,6 +12,8 @@
 
 #include <myrtchallenge/rays.hpp>
 #include <myrtchallenge/spheres.hpp>
+#include <myrtchallenge/transformations.hpp>
+#include <myrtchallenge/world.hpp>
 
 #include "catch_helpers.hpp"
 
@@ -221,6 +223,65 @@ SCENARIO("The hit, when an intersection occurs on the inside.", "[intersections]
                         AND_THEN("comps.inside = true") {
                             REQUIRE(comps.inside == true);
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("shade_hit() is given an intersection in shadow.", "[intersections]") {
+    GIVEN("w <- world()") {
+        auto w = world();
+        AND_GIVEN("w.light <- point_light(point(0, 0, -10), color(1, 1, 1))") {
+            w->light = point_light(point(0, 0, -10), color(1, 1, 1));
+            AND_GIVEN("s1 <- sphere()") {
+                auto s1 = sphere();
+                AND_GIVEN("s1 is added to w") {
+                    w->objects.push_back(s1);
+                    AND_GIVEN("s2 <- sphere() with transform translation(0, 0, 10)") {
+                        auto s2 = sphere();
+                        s2->transform = translation(0, 0, 10);
+                        AND_GIVEN("s2 is added to w") {
+                            w->objects.push_back(s2);
+                            AND_GIVEN("r <- ray(point(0, 0, 5), vector(0, 0, 1))") {
+                                auto r = ray(point(0, 0, 5), vector(0, 0, 1));
+                                AND_GIVEN("i <- intersection(4, s2)") {
+                                    auto i = intersection(4, s2);
+                                    WHEN("comps <- prepare_computations(i, r)") {
+                                        auto comps = prepare_computations(i, r);
+                                        AND_WHEN("c <- shade_hit(w, comps)") {
+                                            auto c = shade_hit(w, comps);
+                                            THEN("c = color(0.1, 0.1, 0.1)") {
+                                                REQUIRE(c == color(0.1, 0.1, 0.1));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The hit should offset the point.", "[intersections]")
+{
+    GIVEN("r <- ray(point(0, 0, -5), vector(0, 0, 1))") {
+        auto r = ray(point(0, 0, -5), vector(0, 0, 1));
+        AND_GIVEN("shape <- sphere() with transform translation(0, 0, 1)") {
+            auto shape = sphere();
+            shape->transform = translation(0, 0, 1);
+            AND_GIVEN("i <- intersection(5, shape)") {
+                auto i = intersection(5, shape);
+                WHEN("comps <- prepare_computations(i, r)") {
+                    auto comps = prepare_computations(i, r);
+                    THEN("comps.over_point.z < -EPSILON/2") {
+                        REQUIRE(comps.over_point.z < 0.00001/2);
                     }
                 }
             }

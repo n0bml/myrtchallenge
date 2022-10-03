@@ -195,3 +195,98 @@ SCENARIO("The color with an intersection behind the ray.", "[world]") {
         }
     }
 }
+
+
+SCENARIO("There is no shadow when nothing is collinear with point and light.", "[world]")
+{
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("p <- point(0, 10, 0)") {
+            auto p = point(0, 10, 0);
+            THEN("is_shadowed(w, p) is false") {
+                REQUIRE_FALSE(is_shadowed(w, p));
+            }
+        }
+    }
+}
+
+
+SCENARIO("There shadow when an object is between the point and the light.", "[world]")
+{
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("p <- point(10, -10, 10)") {
+            auto p = point(10, -10, 10);
+            THEN("is_shadowed(w, p) is true") {
+                REQUIRE(is_shadowed(w, p));
+            }
+        }
+    }
+}
+
+
+SCENARIO("There is no shadow when an object is behind the light.", "[world]")
+{
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("p <- point(-20, 20, -20)") {
+            auto p = point(-20, 20, -20);
+            THEN("is_shadowed(w, p) is false") {
+                REQUIRE_FALSE(is_shadowed(w, p));
+            }
+        }
+    }
+}
+
+
+SCENARIO("There is no shadow when an object is behind the point.", "[world]")
+{
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("p <- point(-2, 2, -2)") {
+            auto p = point(-2, 2, -2);
+            THEN("is_shadowed(w, p) is false") {
+                REQUIRE_FALSE(is_shadowed(w, p));
+            }
+        }
+    }
+}
+
+
+SCENARIO("shade_hit() is geven an intersection in shadow.", "[world]")
+{
+    GIVEN("w <- world()") {
+        auto w = world();
+        AND_GIVEN("w.light = point_light(point(0, 0, -10), color(1, 1, 1))") {
+            w->light = point_light(point(0, 0, -10), color(1, 1, 1));
+            AND_GIVEN("s1 <- sphere()") {
+                auto s1 = sphere();
+                AND_GIVEN("s1 is added to w") {
+                    w->objects.push_back(s1);
+                    AND_GIVEN("s1 <- sphere() with transform translation(0, 0, 10)") {
+                        auto s2 = sphere();
+                        s2->transform = translation(0, 0, 10);
+                        AND_GIVEN("s2 is added to w") {
+                            w->objects.push_back(s2);
+                            AND_GIVEN("r <- ray(point(0, 0, 5), vector(0, 0, 1))") {
+                                auto r = ray(point(0, 0, 5), vector(0, 0, 1));
+                                AND_GIVEN("i <- intersection(4, s2)") {
+                                    auto i = intersection(4, s2);
+                                    WHEN("comps <- prepare_computations(i, r)") {
+                                        auto comps = prepare_computations(i, r);
+                                        AND_WHEN("c <- shade_hit(w, comps)") {
+                                            auto c = shade_hit(w, comps);
+                                            THEN("c = color(0.1, 0.1, 0.1)") {
+                                                REQUIRE(c == color(0.1, 0.1, 0.1));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

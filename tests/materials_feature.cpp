@@ -50,8 +50,8 @@ SCENARIO("Lighting with the eye between the light and the surface.", "[materials
             auto normalv = vector(0, 0, -1);
             AND_GIVEN("light <- point_light(point(0, 0, -10), color(1, 1, 1))") {
                 auto light = point_light(point(0, 0, -10), color(1, 1, 1));
-                WHEN("result <- lighting(m, light, position, eyev, normalv)") {
-                    auto result = lighting(m, light, position, eyev, normalv);
+                WHEN("result <- lighting(m, light, position, eyev, normalv, false)") {
+                    auto result = lighting(m, light, position, eyev, normalv, false);
                     THEN("result = color(1.9, 1.9, 1.9)") {
                         REQUIRE(result == color(1.9, 1.9, 1.9));
                     }
@@ -70,8 +70,8 @@ SCENARIO("Lighting with the eye between light and surface, eye offset 45°.", "[
             auto normalv = vector(0, 0, -1);
             AND_GIVEN("light <- point_light(point(0, 0, -10), color(1, 1, 1))") {
                 auto light = point_light(point(0, 0, -10), color(1, 1, 1));
-                WHEN("result <- lighting(m, light, position, eyev, normalv)") {
-                    auto result = lighting(m, light, position, eyev, normalv);
+                WHEN("result <- lighting(m, light, position, eyev, normalv, false)") {
+                    auto result = lighting(m, light, position, eyev, normalv, false);
                     THEN("result = color(1.0, 1.0, 1.0)") {
                         REQUIRE(result == color(1.0, 1.0, 1.0));
                     }
@@ -90,8 +90,8 @@ SCENARIO("Lighting with eye opposite surface, light offset 45°.", "[materials]"
             auto normalv = vector(0, 0, -1);
             AND_GIVEN("light <- point_light(point(0, 10, -10), color(1, 1, 1)") {
                 auto light = point_light(point(0, 10, -10), color(1, 1, 1));
-                WHEN("result = lighting(m, light, position, eyev, normalv)") {
-                    auto result = lighting(m, light, position, eyev, normalv);
+                WHEN("result = lighting(m, light, position, eyev, normalv, false)") {
+                    auto result = lighting(m, light, position, eyev, normalv, false);
                     THEN("result = color(0.7364, 0.7364, 0.7364)") {
                         REQUIRE(result == color(0.7364, 0.7364, 0.7364));
                     }
@@ -110,8 +110,8 @@ SCENARIO("Lighting with eye in the path of the reflection vector.", "[materials]
             auto normalv = vector(0, 0, -1);
             AND_GIVEN("light <- point_light(point(0, 10, -10), color(1, 1, 1)") {
                 auto light = point_light(point(0, 10, -10), color(1, 1, 1));
-                WHEN("result <- lighting(m, light, position, eyev, normalv)") {
-                    auto result = lighting(m, light, position, eyev, normalv);
+                WHEN("result <- lighting(m, light, position, eyev, normalv, false)") {
+                    auto result = lighting(m, light, position, eyev, normalv, false);
                     THEN("result = color(1.6364, 1.6364, 1.6364)") {
                         REQUIRE(result == color(1.6364, 1.6364, 1.6364));
                     }
@@ -131,10 +131,32 @@ SCENARIO("Lighting with the light behind the surface.", "[materials]")
             auto normalv = vector(0, 0, -1);
             AND_GIVEN("light <- point_light(point(0, 0, 10), color(1, 1, 1)") {
                 auto light = point_light(point(0, 0, 10), color(1, 1, 1));
-                WHEN("result <- lighting(m, light, position, eyev, normalv)") {
-                    auto result = lighting(m, light, position, eyev, normalv);
+                WHEN("result <- lighting(m, light, position, eyev, normalv, false)") {
+                    auto result = lighting(m, light, position, eyev, normalv, false);
                     THEN("result = color(0.1, 0.1, 0.1)") {
                         REQUIRE(result == color(0.1, 0.1, 0.1));
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("Lighting with the surface in shadow.", "[materials]") {
+    GIVEN("eyev <- vector(0, 0, -1)") {
+        auto eyev = vector(0, 0, -1);
+        AND_GIVEN("normalv <- vector(0, 0, -1)") {
+            auto normalv = vector(0, 0, -1);
+            AND_GIVEN("light <- point_light(point(0, 0, -10), color(1, 1, 1))") {
+                auto light = point_light(point(0, 0, -10), color(1, 1, 1));
+                AND_GIVEN("in_shadow <- true") {
+                    auto in_shadow = true;
+                    WHEN("result <- lighting(m, light, position, eyev, normalv, in_shadow)") {
+                        auto result = lighting(m, light, position, eyev, normalv, in_shadow);
+                        THEN("result = color(0.1, 0.1, 0.1)") {
+                            REQUIRE(result == color(0.1, 0.1, 0.1));
+                        }
                     }
                 }
             }
