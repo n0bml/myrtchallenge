@@ -10,7 +10,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
 
-#include <myrtchallenge/spheres.hpp>
+#include <myrtchallenge/shapes.hpp>
 #include <myrtchallenge/transformations.hpp>
 
 #include "catch_helpers.hpp"
@@ -22,8 +22,8 @@ SCENARIO("A ray intersects a sphere at two points.", "[spheres]")
         auto r = ray(point(0, 0, -5), vector(0, 0, 1));
         AND_GIVEN("s <- sphere()") {
             auto s = sphere();
-            WHEN("xs <- intersect(s, r)") {
-                auto xs = intersect(s, r);
+            WHEN("xs <- local_intersect(s, r)") {
+                auto xs = s->local_intersect(r);
                 THEN("xs.count = 2") {
                     REQUIRE(xs.size() == 2);
                     AND_THEN("xs[0].t = 4.0") {
@@ -45,8 +45,8 @@ SCENARIO("A ray intersects a sphere at a tangent.", "[spheres]")
         auto r = ray(point(0, 1, -5), vector(0, 0, 1));
         AND_GIVEN("s <- sphere()") {
             auto s = sphere();
-            WHEN("xs <- intersect(s, r)") {
-                auto xs = intersect(s, r);
+            WHEN("xs <- local_intersect(s, r)") {
+                auto xs = s->local_intersect(r);
                 THEN("xs.count = 2") {
                     REQUIRE(xs.size() == 2);
                     AND_THEN("xs[0].t = 5.0") {
@@ -68,8 +68,8 @@ SCENARIO("A ray misses a sphere.", "[spheres]")
         auto r = ray(point(0, 2, -5), vector(0, 0, 1));
         AND_GIVEN("s <- sphere()") {
             auto s = sphere();
-            WHEN("xs <- intersect(s, r)") {
-                auto xs = intersect(s, r);
+            WHEN("xs <- local_intersect(s, r)") {
+                auto xs = s->local_intersect(r);
                 THEN("xs.count = 0") {
                     REQUIRE(xs.empty());
                 }
@@ -85,8 +85,8 @@ SCENARIO("A ray originates inside a sphere.", "[spheres]")
         auto r = ray(point(0, 0, 0), vector(0, 0, 1));
         AND_GIVEN("s <- sphere()") {
             auto s = sphere();
-            WHEN("xs <- intersect(s, r)") {
-                auto xs = intersect(s, r);
+            WHEN("xs <- local_intersect(s, r)") {
+                auto xs = s->local_intersect(r);
                 THEN("xs.count = 2") {
                     REQUIRE(xs.size() == 2);
                     AND_THEN("xs[0].t = -1.0") {
@@ -108,8 +108,8 @@ SCENARIO("A sphere is behind a ray.", "[spheres]")
         auto r = ray(point(0, 0, 5), vector(0, 0, 1));
         AND_GIVEN("s <- sphere()") {
             auto s = sphere();
-            WHEN("xs <- intersect(s, r)") {
-                auto xs = intersect(s, r);
+            WHEN("xs <- local_intersect(s, r)") {
+                auto xs = s->local_intersect(r);
                 THEN("xs.count = 2") {
                     REQUIRE(xs.size() == 2);
                     AND_THEN("xs[0].t = -6.0") {
@@ -131,8 +131,8 @@ SCENARIO("Intersect sets the object on the intersection.", "[spheres]")
         auto r = ray(point(0, 0, -5), vector(0, 0, 1));
         AND_GIVEN("s <- sphere()") {
             auto s = sphere();
-            WHEN("xs <- intersect(s, r)") {
-                auto xs = intersect(s, r);
+            WHEN("xs <- local_intersect(s, r)") {
+                auto xs = s->local_intersect(r);
                 THEN("xs.count = 2") {
                     REQUIRE(xs.size() == 2);
                     AND_THEN("xs[0].object = s") {
@@ -141,34 +141,6 @@ SCENARIO("Intersect sets the object on the intersection.", "[spheres]")
                             REQUIRE(xs[1].object == s);
                         }
                     }
-                }
-            }
-        }
-    }
-}
-
-
-SCENARIO("A sphere's default transformation.", "[spheres]")
-{
-    GIVEN("s <- sphere()") {
-        auto s = sphere();
-        THEN("s->transform = identity_matrix()") {
-            REQUIRE(s->transform == identity_matrix());
-        }
-    }
-}
-
-
-SCENARIO("Changing a sphere's transformation.", "[spheres]")
-{
-    GIVEN("s <- sphere()") {
-        auto s = sphere();
-        AND_GIVEN("t <- translation(2, 3, 4)") {
-            auto t = translation(2, 3, 4);
-            WHEN("set_transform(s, t)") {
-                set_transform(s, t);
-                THEN("s->transform = t") {
-                    REQUIRE(s->transform == t);
                 }
             }
         }
@@ -321,40 +293,6 @@ SCENARIO("Computing the normal on a transformed sphere.", "[spheres]")
                     auto n = normal_at(s, point(0, std::sqrt(2) / 2, -std::sqrt(2) / 2));
                     THEN("n = vector(0, 0.97014, -0.24254)") {
                         REQUIRE(n == vector(0, 0.97014, -0.24254));
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-SCENARIO("A sphere has a default material.", "[spheres]")
-{
-    GIVEN("s <- sphere()") {
-        auto s = sphere();
-        WHEN("m <- s.material") {
-            auto m = s->material;
-            THEN("m = material()") {
-                REQUIRE(*m == *material());
-            }
-        }
-    }
-}
-
-
-SCENARIO("A sphere may be assigned a material.", "[spheres]")
-{
-    GIVEN("s <- sphere()") {
-        auto s = sphere();
-        AND_GIVEN("m <- material()") {
-            auto m = material();
-            AND_GIVEN("m.ambient <- 1") {
-                m->ambient = 1;
-                WHEN("s.material <- m") {
-                    s->material = m;
-                    THEN("s.material = m") {
-                        REQUIRE(*(s->material) == *m);
                     }
                 }
             }

@@ -10,6 +10,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
 
+#include <myrtchallenge/shapes.hpp>
 #include <myrtchallenge/transformations.hpp>
 #include <myrtchallenge/world.hpp>
 

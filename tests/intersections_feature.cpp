@@ -11,7 +11,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <myrtchallenge/rays.hpp>
-#include <myrtchallenge/spheres.hpp>
+#include <myrtchallenge/shapes.hpp>
 #include <myrtchallenge/transformations.hpp>
 #include <myrtchallenge/world.hpp>
 

@@ -12,7 +12,7 @@
 #include <myrtchallenge/canvas.hpp>
 #include <myrtchallenge/intersections.hpp>
 #include <myrtchallenge/rays.hpp>
-#include <myrtchallenge/spheres.hpp>
+#include <myrtchallenge/shapes.hpp>
 #include <myrtchallenge/transformations.hpp>
 
 

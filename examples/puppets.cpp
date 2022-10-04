@@ -15,6 +15,7 @@
 #include <filesystem>
 
 #include "myrtchallenge/camera.hpp"
+#include "myrtchallenge/shapes.hpp"
 #include "myrtchallenge/transformations.hpp"
 #include "myrtchallenge/world.hpp"
 

@@ -25,7 +25,7 @@ add_library(myrtchallenge
     materials.cpp
     matrices.cpp
     rays.cpp
-    spheres.cpp
+    shapes.cpp
     transformations.cpp
     tuples.cpp
     world.cpp

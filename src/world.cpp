@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "myrtchallenge/shapes.hpp"
 #include "myrtchallenge/transformations.hpp"
 #include "myrtchallenge/world.hpp"
 

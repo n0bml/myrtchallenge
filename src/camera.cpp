@@ -39,7 +39,7 @@ Ray ray_for_pixel(const Camera_Ptr& camera, double_t px, double_t py)
     auto yoffset = (py + 0.5) * camera->pixel_size;
 
     // the untransformed coordinates of the pixel in world space
-    // (remember that the camera looks towar -z, so +x is to the "left".)
+    // (remember that the camera looks towards -z, so +x is to the "left".)
     auto world_x = camera->half_width - xoffset;
     auto world_y = camera->half_height - yoffset;
 

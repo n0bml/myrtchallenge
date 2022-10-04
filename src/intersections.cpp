@@ -9,7 +9,7 @@
 #include <cmath>
 
 #include "myrtchallenge/intersections.hpp"
-#include "myrtchallenge/spheres.hpp"
+#include "myrtchallenge/shapes.hpp"
 #include "myrtchallenge/tuples.hpp"
 
 #include "primitives.hpp"
@@ -36,7 +36,7 @@ Intersection hit(const Intersections& is)
 }
 
 
-Intersection intersection(double_t t, Sphere_Ptr object)
+Intersection intersection(double_t t, Shape_Ptr object)
 {
     return Intersection{t, object};
 }

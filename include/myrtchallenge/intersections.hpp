@@ -15,14 +15,14 @@
 #include "myrtchallenge/rays.hpp"
 
 
-struct Sphere;
-using Sphere_Ptr = std::shared_ptr<Sphere>;
+struct Shape;
+using Shape_Ptr = std::shared_ptr<Shape>;
 
 
 struct Intersection
 {
     double_t t;
-    Sphere_Ptr object;
+    Shape_Ptr object;
 
     bool operator<(const Intersection& rhs) const;
     bool operator==(const Intersection& rhs) const;
@@ -34,14 +34,14 @@ struct Intersection
 using Intersections = std::vector<Intersection>;
 
 Intersection hit(const Intersections& is);
-Intersection intersection(double_t t, Sphere_Ptr object);
+Intersection intersection(double_t t, Shape_Ptr object);
 Intersections intersections(const Intersections& is);
 
 
 struct Computations
 {
     double_t t;
-    Sphere_Ptr object;
+    Shape_Ptr object;
     Tuple point;
     Tuple eyev;
     Tuple normalv;
