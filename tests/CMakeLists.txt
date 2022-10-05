@@ -38,6 +38,11 @@ target_compile_features(matrices_feature PRIVATE cxx_std_20)
 target_link_libraries(matrices_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME matrices_feature COMMAND matrices_feature)
 
+add_executable(patterns_feature patterns_feature.cpp)
+target_compile_features(patterns_feature PRIVATE cxx_std_20)
+target_link_libraries(patterns_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME patterns_feature COMMAND patterns_feature)
+
 add_executable(planes_feature planes_feature.cpp)
 target_compile_features(planes_feature PRIVATE cxx_std_20)
 target_link_libraries(planes_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)

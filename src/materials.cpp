@@ -10,7 +10,9 @@
 #include <cmath>
 #include <optional>
 
+#include "myrtchallenge/patterns.hpp"
 #include "myrtchallenge/materials.hpp"
+#include "myrtchallenge/shapes.hpp"
 
 #include "primitives.hpp"
 
@@ -44,20 +46,25 @@ bool Material::operator!=(const Material& rhs) const
 
 Material_Ptr material()
 {
-    return std::make_shared<Material>(
-        color(1, 1, 1),  // color
-        0.1,             // ambient
-        0.9,             // diffuse
-        0.9,             // specular
-        200.0            // shininess
-    );
+    auto ptr = std::make_shared<Material>();
+    ptr->color     = color(1, 1, 1);
+    ptr->ambient   = 0.1;
+    ptr->diffuse   = 0.9;
+    ptr->specular  = 0.9;
+    ptr->shininess = 200.0;
+    ptr->pattern   = nullptr;
+    return ptr;
 }
 
 
-Color lighting(const Material_Ptr material, const Point_Light_Ptr light, const Tuple& point, const Tuple& eyev, const Tuple& normalv, bool in_shadow)
+Color lighting(const Material_Ptr& material, const Shape_Ptr& object, const Point_Light_Ptr& light, const Tuple& point, const Tuple& eyev, const Tuple& normalv, bool in_shadow)
 {
+    auto effective_color = material->color;
+    if (material->pattern)
+        effective_color = pattern_at_shape(material->pattern, object, point);
+
     // combine the surface color with the light's color/itensity.
-    auto effective_color = material->color * light->intensity;
+    effective_color = effective_color * light->intensity;
 
     // find the direction of the light source
     auto lightv = normalize(light->position - point);

@@ -24,6 +24,7 @@ add_library(myrtchallenge
     lights.cpp
     materials.cpp
     matrices.cpp
+    patterns.cpp
     rays.cpp
     shapes.cpp
     transformations.cpp

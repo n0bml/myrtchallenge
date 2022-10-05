@@ -61,7 +61,7 @@ int main(int argc, char* argv[], char* envp[])
                 auto pt = position(r, h.t);
                 auto normal = normal_at(h.object, pt);
                 auto eye = -r.direction;
-                auto color = lighting(h.object->material, light, pt, eye, normal, false);
+                auto color = lighting(h.object->material, h.object, light, pt, eye, normal, false);
                 write_pixel(c, x, y, color);
             }
         }

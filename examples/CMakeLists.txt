@@ -18,6 +18,11 @@ target_include_directories(casting PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(casting PRIVATE ${LIBPNG_LIBRARY_DIRS})
 target_link_libraries(casting PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
 
+add_executable(patterns patterns.cpp)
+target_include_directories(patterns PRIVATE ${LIBPNG_INCLUDE_DIRS})
+target_link_directories(patterns PRIVATE ${LIBPNG_LIBRARY_DIRS})
+target_link_libraries(patterns PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
+
 add_executable(planes planes.cpp)
 target_include_directories(planes PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(planes PRIVATE ${LIBPNG_LIBRARY_DIRS})

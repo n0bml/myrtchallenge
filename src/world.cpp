@@ -82,5 +82,5 @@ bool is_shadowed(const World_Ptr& world, const Tuple& point)
 Color shade_hit(const World_Ptr& world, const Computations& comps)
 {
     auto shadowed = is_shadowed(world, comps.over_point);
-    return lighting(comps.object->material, world->light, comps.point, comps.eyev, comps.normalv, shadowed);
+    return lighting(comps.object->material, comps.object, world->light, comps.point, comps.eyev, comps.normalv, shadowed);
 }
