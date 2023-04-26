@@ -48,7 +48,10 @@ struct Computations
     bool inside;
     Tuple over_point;
     Tuple reflectv;
+    double_t n1;
+    double_t n2;
+    Tuple under_point;
 };
 
 
-Computations prepare_computations(const Intersection& i, const Ray& ray);
+Computations prepare_computations(const Intersection& i, const Ray& ray, const Intersections& xs = std::vector<Intersection>{});

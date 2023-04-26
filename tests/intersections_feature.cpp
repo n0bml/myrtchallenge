@@ -10,6 +10,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
 
+#include "../../src/primitives.hpp"
 #include <myrtchallenge/rays.hpp>
 #include <myrtchallenge/shapes.hpp>
 #include <myrtchallenge/transformations.hpp>
@@ -301,6 +302,149 @@ SCENARIO("Precomputing the reflection vector.", "[intersections]") {
                     auto comps = prepare_computations(i, r);
                     THEN("comps.reflectv = vector(0, √2/2, √2/2)") {
                         REQUIRE(comps.reflectv == vector(0, M_SQRT2 / 2, M_SQRT2 / 2));
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("Finding n1 and n2 at various intersections.", "[intersections]") {
+    auto a = glass_sphere();
+    a->transform = scaling(2, 2, 2);
+    a->material->refractive_index = 1.5;
+
+    auto b = glass_sphere();
+    b->transform = translation(0, 0, -0.25);
+    b->material->refractive_index = 2.0;
+
+    auto c = glass_sphere();
+    c->transform = translation(0, 0, 0.25);
+    c->material->refractive_index = 2.5;
+
+    auto r = ray(point(0, 0, -4), vector(0, 0, 1));
+    auto xs = intersections({{2, a}, {2.75, b}, {3.25, c}, {4.75, b}, {5.25, c}, {6, a}});
+
+    int index;
+    double_t n1, n2;
+
+    GIVEN("index 0 n1 1.0 n2 1.5") {
+        int index = 0;
+        double_t n1 = 1.0;
+        double_t n2 = 1.5;
+
+        WHEN("comps <- prepare_computations(xs[<index>], r, xs)") {
+            auto comps = prepare_computations(xs[index], r, xs);
+            THEN("comps.n1 = <n1>") {
+                REQUIRE(comps.n1 == n1);
+                AND_THEN("comps.n2 = <n2>") {
+                    REQUIRE(comps.n2 == n2);
+                }
+            }
+        }
+    }
+
+    GIVEN("index 1 n1 1.5 n2 2.0") {
+        int index = 1;
+        double_t n1 = 1.5;
+        double_t n2 = 2.0;
+
+        WHEN("comps <- prepare_computations(xs[<index>], r, xs)") {
+            auto comps = prepare_computations(xs[index], r, xs);
+            THEN("comps.n1 = <n1>") {
+                REQUIRE(comps.n1 == n1);
+                AND_THEN("comps.n2 = <n2>") {
+                    REQUIRE(comps.n2 == n2);
+                }
+            }
+        }
+    }
+
+    GIVEN("index 2 n1 2.0 n2 2.5") {
+        int index = 2;
+        double_t n1 = 2.0;
+        double_t n2 = 2.5;
+
+        WHEN("comps <- prepare_computations(xs[<index>], r, xs)") {
+            auto comps = prepare_computations(xs[index], r, xs);
+            THEN("comps.n1 = <n1>") {
+                REQUIRE(comps.n1 == n1);
+                AND_THEN("comps.n2 = <n2>") {
+                    REQUIRE(comps.n2 == n2);
+                }
+            }
+        }
+    }
+
+    GIVEN("index 3 n1 2.5 n2 2.5") {
+        int index = 3;
+        double_t n1 = 2.5;
+        double_t n2 = 2.5;
+
+        WHEN("comps <- prepare_computations(xs[<index>], r, xs)") {
+            auto comps = prepare_computations(xs[index], r, xs);
+            THEN("comps.n1 = <n1>") {
+                REQUIRE(comps.n1 == n1);
+                AND_THEN("comps.n2 = <n2>") {
+                    REQUIRE(comps.n2 == n2);
+                }
+            }
+        }
+    }
+
+    GIVEN("index 4 n1 2.5 n2 1.5") {
+        int index = 4;
+        double_t n1 = 2.5;
+        double_t n2 = 1.5;
+
+        WHEN("comps <- prepare_computations(xs[<index>], r, xs)") {
+            auto comps = prepare_computations(xs[index], r, xs);
+            THEN("comps.n1 = <n1>") {
+                REQUIRE(comps.n1 == n1);
+                AND_THEN("comps.n2 = <n2>") {
+                    REQUIRE(comps.n2 == n2);
+                }
+            }
+        }
+    }
+
+    GIVEN("index 5 n1 1.5 n2 1.0") {
+        int index = 5;
+        double_t n1 = 1.5;
+        double_t n2 = 1.0;
+
+        WHEN("comps <- prepare_computations(xs[<index>], r, xs)") {
+            auto comps = prepare_computations(xs[index], r, xs);
+            THEN("comps.n1 = <n1>") {
+                REQUIRE(comps.n1 == n1);
+                AND_THEN("comps.n2 = <n2>") {
+                    REQUIRE(comps.n2 == n2);
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The under point is offset below the surface.", "[intersections]") {
+    GIVEN("r <- ray(point(0, 0, -5), vector(0, 0, 1))") {
+        auto r = ray(point(0, 0, -5), vector(0, 0, 1));
+        AND_GIVEN("shape <- glass_sphere()...") {
+            auto shape = glass_sphere();
+            shape->transform = translation(0, 0, 1);
+            AND_GIVEN("i <- intersection(5, shape)") {
+                auto i = intersection(5, shape);
+                AND_GIVEN("xs <- intersections(i)") {
+                    auto xs = intersections({i});
+                    WHEN("comps <- prepare_computations(i, r, xs)") {
+                        auto comps = prepare_computations(i, r, xs);
+                        THEN("comps.under_point.z > EPSILON/2") {
+                            REQUIRE(comps.under_point.z > EPSILON / 2);
+                            AND_THEN("comps.point.z < comps.under_point.z") {
+                                REQUIRE(comps.point.z < comps.under_point.z);
+                            }
+                        }
                     }
                 }
             }

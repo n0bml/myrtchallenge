@@ -93,10 +93,46 @@ Color reflected_color(const World_Ptr& world, const Computations& comps, int rem
 }
 
 
+Color refracted_color(const World_Ptr& world, const Computations& comps, int remaining)
+{
+    if (remaining <= 0)
+        return color(0, 0, 0);
+
+    if (comps.object->material->transparency == 0)
+        return color(0, 0, 0);
+
+    // Find the ratio of first index of refraction to the second.
+    // (Yup, this is inverted from the definition of Snell's Law.)
+    auto n_ratio = comps.n1 / comps.n2;
+
+    // cos(theta_i) is the same as the dot product of the two vectors
+    auto cos_i = dot(comps.eyev, comps.normalv);
+
+    // Find sin(theta_t)^2 via trigonomic identity
+    auto sin2_t = std::pow(n_ratio, 2) * (1 - std::pow(cos_i, 2));
+    if (sin2_t > 1)
+        return color(0, 0, 0);
+
+    // Find cos(theta_t) via trigonomic identity
+    auto cos_t = std::sqrt(1.0 - sin2_t);
+
+    // Compute the direction of the refracted ray
+    auto direction = comps.normalv * (n_ratio * cos_i - cos_t) - comps.eyev * n_ratio;
+
+    // Create the refracted ray
+    auto refract_ray = ray(comps.under_point, direction);
+
+    // Find the color of the refracted ray, making sure to multiply
+    // by the transparency value to account for any opacity
+    return color_at(world, refract_ray, remaining - 1) * comps.object->material->transparency;
+}
+
+
 Color shade_hit(const World_Ptr& world, const Computations& comps, int remaining)
 {
     auto shadowed = is_shadowed(world, comps.over_point);
     auto surface = lighting(comps.object->material, comps.object, world->light, comps.point, comps.eyev, comps.normalv, shadowed);
     auto reflected = reflected_color(world, comps, remaining);
-    return surface + reflected;
+    auto refracted = refracted_color(world, comps, remaining);
+    return surface + reflected + refracted;
 }

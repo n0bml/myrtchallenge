@@ -34,4 +34,5 @@ Color color_at(const World_Ptr& world, const Ray& ray, int remaining = 5);
 Intersections intersect_world(const World_Ptr& world, const Ray& ray);
 bool is_shadowed(const World_Ptr& world, const Tuple& point);
 Color reflected_color(const World_Ptr& world, const Computations& comps, int remaining = 5);
+Color refracted_color(const World_Ptr& world, const Computations& comps, int remaining = 5);
 Color shade_hit(const World_Ptr& world, const Computations& comps, int remaining = 5);

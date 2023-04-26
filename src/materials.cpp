@@ -34,6 +34,12 @@ bool Material::operator==(const Material& rhs) const
     if (!equal(shininess, rhs.shininess)) {
         return false;
     }
+    if (!equal(transparency, rhs.transparency)) {
+        return false;
+    }
+    if (!equal(refractive_index, rhs.refractive_index)) {
+        return false;
+    }
     return true;
 }
 
@@ -47,13 +53,15 @@ bool Material::operator!=(const Material& rhs) const
 Material_Ptr material()
 {
     auto ptr = std::make_shared<Material>();
-    ptr->color      = color(1, 1, 1);
-    ptr->ambient    = 0.1;
-    ptr->diffuse    = 0.9;
-    ptr->specular   = 0.9;
-    ptr->shininess  = 200.0;
-    ptr->pattern    = nullptr;
-    ptr->reflective = 0.0;
+    ptr->color            = color(1, 1, 1);
+    ptr->ambient          = 0.1;
+    ptr->diffuse          = 0.9;
+    ptr->specular         = 0.9;
+    ptr->shininess        = 200.0;
+    ptr->pattern          = nullptr;
+    ptr->reflective       = 0.0;
+    ptr->transparency     = 0.0;
+    ptr->refractive_index = 1.0;
     return ptr;
 }
 

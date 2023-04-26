@@ -50,9 +50,32 @@ Intersections intersections(const Intersections& is)
 }
 
 
-Computations prepare_computations(const Intersection& i, const Ray& ray)
+Computations prepare_computations(const Intersection& i, const Ray& ray, const Intersections& xs)
 {
     Computations comps;
+
+    std::vector<Shape_Ptr> containers;
+    for (auto it = std::begin(xs); it != std::end(xs); ++it) {
+        if (*it == i) {
+            if (containers.empty())
+                comps.n1 = 1.0;
+            else
+                comps.n1 = containers.back()->material->refractive_index;
+        }
+
+        auto cit = std::find(std::begin(containers), std::end(containers), it->object);
+        if (cit != std::end(containers))
+            containers.erase(cit);
+        else
+            containers.push_back(it->object);
+
+        if (*it == i) {
+            if (containers.empty())
+                comps.n2 = 1.0;
+            else
+                comps.n2 = containers.back()->material->refractive_index;
+        }
+    }
 
     // copy the intersection's properties, for convenience
     comps.t      = i.t;
@@ -70,8 +93,9 @@ Computations prepare_computations(const Intersection& i, const Ray& ray)
     else
         comps.inside = false;
 
-    comps.reflectv   = reflect(ray.direction, comps.normalv);
-    comps.over_point = comps.point + comps.normalv * EPSILON;
+    comps.reflectv    = reflect(ray.direction, comps.normalv);
+    comps.over_point  = comps.point + comps.normalv * EPSILON;
+    comps.under_point = comps.point - comps.normalv * EPSILON;
 
     return comps;
 }

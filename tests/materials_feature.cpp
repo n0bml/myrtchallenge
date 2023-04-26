@@ -219,3 +219,16 @@ SCENARIO("Reflectivity for the default material.", "[materials]") {
         }
     }
 }
+
+
+SCENARIO("Transparency and Refractive Index for the default material.", "[materials]") {
+    GIVEN("m <- material()") {
+        auto m = material();
+        THEN("m.transparency = 0.0") {
+            REQUIRE(m->transparency == 0.0);
+            AND_THEN("m.refractive_index = 1.0") {
+                REQUIRE(m->refractive_index == 1.0);
+            }
+        }
+    }
+}

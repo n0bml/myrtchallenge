@@ -50,6 +50,7 @@ using Shape_Ptr = std::shared_ptr<Shape>;
 
 Shape_Ptr plane();
 Shape_Ptr sphere();
+Shape_Ptr glass_sphere();
 
 
 Intersections intersect(Shape_Ptr sphere, const Ray& ray);

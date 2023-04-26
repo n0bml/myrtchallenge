@@ -112,7 +112,6 @@ Tuple Plane::local_normal_at(const Tuple& /*pt*/) const
 }
 
 
-
 /**
  * @brief Construct and return a shared pointer to a Sphere.
  *
@@ -126,6 +125,19 @@ Shape_Ptr sphere()
     return ptr;
 }
 
+
+/**
+ * @brief A helper for producing a sphere with a glassy material.
+ *
+ * @return Shape_Ptr
+ */
+Shape_Ptr glass_sphere()
+{
+    auto s = sphere();
+    s->material->transparency = 1.0;
+    s->material->refractive_index = 1.5;
+    return s;
+}
 
 /**
  * @brief Return the intersections between the ray and the Sphere.

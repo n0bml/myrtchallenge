@@ -15,6 +15,7 @@
 #include <myrtchallenge/world.hpp>
 
 #include "catch_helpers.hpp"
+#include "test_pattern.hpp"
 
 
 SCENARIO("Creating a world.", "[world]")
@@ -405,6 +406,167 @@ SCENARIO("The reflected color at the maximum recursive depth.", "[world]") {
                                 auto c = reflected_color(w, comps, 0);
                                 THEN("c = color(0, 0, 0)") {
                                     REQUIRE(c == color(0, 0, 0));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The refracted color with an opaque surface.", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("shape <- the first object in w") {
+            auto shape = w->objects.front();
+            AND_GIVEN("r <- ray(point(0, 0, -5), vector(0, 0, 1))") {
+                auto r = ray(point(0, 0, -5), vector(0, 0, 1));
+                AND_GIVEN("xs <- intersections(4:shape, 5:shape)") {
+                    auto xs = intersections({{4, shape}, {5, shape}});
+                    WHEN("comps <- prepare_computations(xs[0], r, xs)") {
+                        auto comps = prepare_computations(xs[0], r, xs);
+                        AND_WHEN("c <- refracted_color(w, comps, 5)") {
+                            auto c = refracted_color(w, comps, 5);
+                            THEN("c = color(0, 0, 0)") {
+                                REQUIRE(c == color(0, 0, 0));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The refracted color at the maximum recursive depth.", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("shape <- the first object in w") {
+            auto shape = w->objects.front();
+            AND_GIVEN("shape has...") {
+                shape->material->transparency = 1.0;
+                shape->material->refractive_index = 1.5;
+                AND_GIVEN("r <- ray(point(0, 0, -5), vector(0, 0, 1))") {
+                    auto r = ray(point(0, 0, -5), vector(0, 0, 1));
+                    AND_GIVEN("xs = intersection(4:shape, 6:shape)") {
+                        auto xs = intersections({{4, shape}, {6, shape}});
+                        WHEN("comps <- prepare_computations(xs[0], r, xs)") {
+                            auto comps = prepare_computations(xs[0], r, xs);
+                            AND_WHEN("c <- refracted_color(w, comps, 0)") {
+                                auto c = refracted_color(w, comps, 0);
+                                THEN("c = color(0, 0, 0)") {
+                                    REQUIRE(c == color(0, 0, 0));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The refracted color under total internal reflection.", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("shape <- first object in w") {
+            auto shape = w->objects.front();
+            AND_GIVEN("shape has ...") {
+                shape->material->transparency = 1.0;
+                shape->material->refractive_index = 1.5;
+                AND_GIVEN("r <- ray(point(0, 0, √2/2), vector(0, 1, 0))") {
+                    auto r = ray(point(0, 0, M_SQRT2/2), vector(0, 1, 0));
+                    AND_GIVEN("xs <- intersections(-√2/2:shape, √2/2:shape)") {
+                        auto xs = intersections({{-M_SQRT2/2, shape}, {M_SQRT2/2, shape}});
+                        // NOTE: this time we're inside the sphere, so we need
+                        // to look at the second intersection, xs[1], not xs[0]
+                        WHEN("comps <- prepare_computations(xs[1], r, xs)") {
+                            auto comps = prepare_computations(xs[1], r, xs);
+                            AND_WHEN("c <- refracted_color(w, comps, 5)") {
+                                auto c = refracted_color(w, comps, 5);
+                                THEN("c = color(0, 0, 0)") {
+                                    REQUIRE(c == color(0, 0, 0));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The refracted color with a refracted ray.", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("a <- the first object in w") {
+            auto a = w->objects.front();
+            AND_GIVEN("a has...") {
+                a->material->ambient = 1.0;
+                a->material->pattern = test_pattern();
+                AND_GIVEN("b <- the second object in w") {
+                    auto b = w->objects[1];
+                    AND_GIVEN("b has...") {
+                        b->material->transparency = 1.0;
+                        b->material->refractive_index = 1.5;
+                        AND_GIVEN("r <- ray(point(0, 0, 0.1), vector(0, 1, 0))") {
+                            auto r = ray(point(0, 0, 0.1), vector(0, 1, 0));
+                            AND_GIVEN("xs <- intersections(-0.9899:a, -0.4899:b, 0.4899:b, 0.9899:a)") {
+                                auto xs = intersections({{-0.9899, a}, {-0.4899, b}, {0.4899, b}, {0.9899, a}});
+                                WHEN("comps <- prepare_computations(xs[2], r, xs)") {
+                                    auto comps = prepare_computations(xs[2], r, xs);
+                                    AND_WHEN("c <- refracted_color(w, comps, 5)") {
+                                        auto c = refracted_color(w, comps, 5);
+                                        THEN("c = color(0, 0.998885, 0.0472195)") {
+                                            REQUIRE(c == color(0, 0.998885, 0.0472195));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("shade_hit() with a transparent material", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("floor <- plane()...") {
+            auto floor = plane();
+            floor->transform = translation(0, -1, 0);
+            floor->material->transparency = 0.5;
+            floor->material->refractive_index = 1.5;
+            AND_GIVEN("floor is added to w") {
+                w->objects.push_back(floor);
+                AND_GIVEN("ball <- sphere()...") {
+                    auto ball = sphere();
+                    ball->material->color = color(1, 0, 0);
+                    ball->material->ambient = 0.5;
+                    ball->transform = translation(0, -3.5, -0.5);
+                    AND_GIVEN("ball is added to w") {
+                        w->objects.push_back(ball);
+                        AND_GIVEN("r <- ray(point(0, 0, -3), vector(0, -√2/2, √2/2))") {
+                            auto r = ray(point(0, 0, -3), vector(0, -M_SQRT2/2, M_SQRT2/2));
+                            AND_GIVEN("xs <- intersections(√2:floor)") {
+                                auto xs = intersections({{M_SQRT2, floor}});
+                                WHEN("comps <- prepare_computations(xs[0], r, xs)") {
+                                    auto comps = prepare_computations(xs[0], r, xs);
+                                    AND_WHEN("color <- shade_hit(w, comps, 5)") {
+                                        auto c = shade_hit(w, comps, 5);
+                                        THEN("color = color(0.93642, 0.68642, 0.68642)") {
+                                            REQUIRE(c == color(0.93642, 0.68642, 0.68642));
+                                        }
+                                    }
                                 }
                             }
                         }

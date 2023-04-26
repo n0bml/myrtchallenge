@@ -299,3 +299,19 @@ SCENARIO("Computing the normal on a transformed sphere.", "[spheres]")
         }
     }
 }
+
+
+SCENARIO("A helper for producing a sphere with a glassy material.", "[spheres]") {
+    GIVEN("s <- glass_sphere()") {
+        auto s = glass_sphere();
+        THEN("s.transform = identity_matrix") {
+            REQUIRE(s->transform == identity_matrix());
+            AND_THEN("s.material.transparency = 1.0") {
+                REQUIRE(s->material->transparency == 1.0);
+                AND_THEN("s.material.refractive_index = 1.5") {
+                    REQUIRE(s->material->refractive_index == 1.5);
+                }
+            }
+        }
+    }
+}
