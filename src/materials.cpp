@@ -47,12 +47,13 @@ bool Material::operator!=(const Material& rhs) const
 Material_Ptr material()
 {
     auto ptr = std::make_shared<Material>();
-    ptr->color     = color(1, 1, 1);
-    ptr->ambient   = 0.1;
-    ptr->diffuse   = 0.9;
-    ptr->specular  = 0.9;
-    ptr->shininess = 200.0;
-    ptr->pattern   = nullptr;
+    ptr->color      = color(1, 1, 1);
+    ptr->ambient    = 0.1;
+    ptr->diffuse    = 0.9;
+    ptr->specular   = 0.9;
+    ptr->shininess  = 200.0;
+    ptr->pattern    = nullptr;
+    ptr->reflective = 0.0;
     return ptr;
 }
 

@@ -288,3 +288,22 @@ SCENARIO("The hit should offset the point.", "[intersections]")
         }
     }
 }
+
+
+SCENARIO("Precomputing the reflection vector.", "[intersections]") {
+    GIVEN("shape <- plane()") {
+        auto shape = plane();
+        AND_GIVEN("r <- ray(point(0, 1, -1), vector(0, -√2/2, √2/2))") {
+            auto r = ray(point(0, 1, -1), vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+            AND_GIVEN("i <- intersection(√2, shape)") {
+                auto i = intersection(M_SQRT2, shape);
+                WHEN("comps <- prepare_computations(i, r)") {
+                    auto comps = prepare_computations(i, r);
+                    THEN("comps.reflectv = vector(0, √2/2, √2/2)") {
+                        REQUIRE(comps.reflectv == vector(0, M_SQRT2 / 2, M_SQRT2 / 2));
+                    }
+                }
+            }
+        }
+    }
+}

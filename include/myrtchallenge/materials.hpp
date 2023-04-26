@@ -24,6 +24,7 @@ struct Material
     double_t specular;
     double_t shininess;
     Pattern_Ptr pattern;
+    double_t reflective;
 
     bool operator==(const Material& rhs) const;
     bool operator!=(const Material& rhs) const;

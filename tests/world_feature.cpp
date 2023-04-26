@@ -291,3 +291,126 @@ SCENARIO("shade_hit() is geven an intersection in shadow.", "[world]")
         }
     }
 }
+
+
+SCENARIO("The reflected color for a reflective material.", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("shape <- plane() with reflective and transformation.") {
+            auto shape = plane();
+            shape->material->reflective = 0.5;
+            shape->transform = translation(0, -1, 0);
+            AND_GIVEN("shape is added to w") {
+                w->objects.push_back(shape);
+                AND_GIVEN("r <- ray(point(0, 0, -3), vector(0, -√2/2, √2/2))") {
+                    auto r = ray(point(0, 0, -3), vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+                    AND_GIVEN("i <- intersection(√2, shape)") {
+                        auto i = intersection(M_SQRT2, shape);
+                        WHEN("comps <- prepare_computations(i, r)") {
+                            auto comps = prepare_computations(i, r);
+                            AND_WHEN("color <- reflected_color(w, comps)") {
+                                auto clr = reflected_color(w, comps);
+                                THEN("color = color(0.19033, 0.23792, 0.14275)") {
+                                    REQUIRE(clr == color(0.19033, 0.23792, 0.14275));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("shade_hit() with a reflective material.", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("shape <- plane() with reflective and transformation.") {
+            auto shape = plane();
+            shape->material->reflective = 0.5;
+            shape->transform = translation(0, -1, 0);
+            AND_GIVEN("shape is added to w") {
+                w->objects.push_back(shape);
+                AND_GIVEN("r <- ray(point(0, 0, -3), vector(0, -√2/2, √2/2))") {
+                    auto r = ray(point(0, 0, -3), vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+                    AND_GIVEN("i <- intersection(√2, shape)") {
+                        auto i = intersection(M_SQRT2, shape);
+                        WHEN("comps <- prepare_computations(i, r)") {
+                            auto comps = prepare_computations(i, r);
+                            AND_WHEN("color <- shade_hit(w, comps)") {
+                                auto c = shade_hit(w, comps);
+                                THEN("color = color(0.87677, 0.92436, 0.82918)") {
+                                    REQUIRE(c == color(0.87676, 0.92434, 0.82918));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("color_at() with mutually reflective surfaces.", "[world]") {
+    GIVEN("w <- world()") {
+        auto w = world();
+        AND_GIVEN("w.light <- point_light(position(0, 0, 0), color(1, 1, 1))") {
+            w->light = point_light(point(0, 0, 0), color(1, 1, 1));
+            AND_GIVEN("lower <- plane()...") {
+                auto lower = plane();
+                lower->material->reflective = 1;
+                lower->transform = translation(0, -1, 0);
+                AND_GIVEN("lower is added to w") {
+                    w->objects.push_back(lower);
+                    AND_GIVEN("upper <- plane()...") {
+                        auto upper = plane();
+                        upper->material->reflective = 1;
+                        upper->transform = translation(0, 1, 0);
+                        AND_GIVEN("upper is added to w") {
+                            w->objects.push_back(upper);
+                            AND_GIVEN("r <- ray(point(0, 0, 0), vector(0, 1, 0))") {
+                                auto r = ray(point(0, 0, 0), vector(0, 1, 0));
+                                THEN("color_at(w, r) should terminate successfully") {
+                                    auto c = color_at(w, r);
+                                    REQUIRE(true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The reflected color at the maximum recursive depth.", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("shape <- plane()...") {
+            auto shape = plane();
+            shape->material->reflective = 0.5;
+            shape->transform = translation(0, -1, 0);
+            AND_GIVEN("shape is added to w") {
+                w->objects.push_back(shape);
+                AND_GIVEN("r <- ray(point(0, 0, -3), vector(0, -√2/2, √2/2))") {
+                    auto r = ray(point(0, 0, -1), vector(0, -M_SQRT2/2, M_SQRT2/2));
+                    AND_GIVEN("i <- intersection(√2, shape)") {
+                        auto i = intersection(M_SQRT2, shape);
+                        WHEN("comps <- prepare_computations(i, r)") {
+                            auto comps = prepare_computations(i, r);
+                            AND_WHEN("color <- reflected_color(w, comps, 0)") {
+                                auto c = reflected_color(w, comps, 0);
+                                THEN("c = color(0, 0, 0)") {
+                                    REQUIRE(c == color(0, 0, 0));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

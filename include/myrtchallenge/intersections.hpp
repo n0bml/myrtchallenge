@@ -47,6 +47,7 @@ struct Computations
     Tuple normalv;
     bool inside;
     Tuple over_point;
+    Tuple reflectv;
 };
 
 

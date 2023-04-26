@@ -209,3 +209,13 @@ SCENARIO("Lighting with a pattern applied.", "[materials]") {
         }
     }
 }
+
+
+SCENARIO("Reflectivity for the default material.", "[materials]") {
+    GIVEN("m <- material()") {
+        auto m = material();
+        THEN("m.reflective = 0.0") {
+            REQUIRE(m->reflective == 0.0);
+        }
+    }
+}

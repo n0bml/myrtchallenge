@@ -40,14 +40,14 @@ World_Ptr default_world()
 }
 
 
-Color color_at(const World_Ptr& world, const Ray& ray)
+Color color_at(const World_Ptr& world, const Ray& ray, int remaining)
 {
     auto xs = intersect_world(world, ray);
     auto x = hit(xs);
     if (!x.hit())
         return color(0, 0, 0);
     auto comps = prepare_computations(x, ray);
-    return shade_hit(world, comps);
+    return shade_hit(world, comps, remaining);
 }
 
 
@@ -79,8 +79,24 @@ bool is_shadowed(const World_Ptr& world, const Tuple& point)
 }
 
 
-Color shade_hit(const World_Ptr& world, const Computations& comps)
+Color reflected_color(const World_Ptr& world, const Computations& comps, int remaining)
+{
+    if (remaining <= 0)
+        return color(0, 0, 0);
+
+    if (comps.object->material->reflective == 0)
+        return color(0, 0, 0);
+
+    auto reflect_ray = ray(comps.over_point, comps.reflectv);
+    auto clr = color_at(world, reflect_ray, remaining - 1);
+    return clr * comps.object->material->reflective;
+}
+
+
+Color shade_hit(const World_Ptr& world, const Computations& comps, int remaining)
 {
     auto shadowed = is_shadowed(world, comps.over_point);
-    return lighting(comps.object->material, comps.object, world->light, comps.point, comps.eyev, comps.normalv, shadowed);
+    auto surface = lighting(comps.object->material, comps.object, world->light, comps.point, comps.eyev, comps.normalv, shadowed);
+    auto reflected = reflected_color(world, comps, remaining);
+    return surface + reflected;
 }
