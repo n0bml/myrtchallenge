@@ -46,7 +46,7 @@ Color color_at(const World_Ptr& world, const Ray& ray, int remaining)
     auto x = hit(xs);
     if (!x.hit())
         return color(0, 0, 0);
-    auto comps = prepare_computations(x, ray);
+    auto comps = prepare_computations(x, ray, xs);
     return shade_hit(world, comps, remaining);
 }
 
@@ -132,7 +132,7 @@ Color shade_hit(const World_Ptr& world, const Computations& comps, int remaining
 {
     auto shadowed = is_shadowed(world, comps.over_point);
 
-    auto surface = lighting(comps.object->material, comps.object, world->light, comps.point, comps.eyev, comps.normalv, shadowed);
+    auto surface = lighting(comps.object->material, comps.object, world->light, comps.over_point, comps.eyev, comps.normalv, shadowed);
 
     auto reflected = reflected_color(world, comps, remaining);
     auto refracted = refracted_color(world, comps, remaining);

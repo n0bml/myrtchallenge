@@ -523,8 +523,8 @@ SCENARIO("The refracted color with a refracted ray.", "[world]") {
                                     auto comps = prepare_computations(xs[2], r, xs);
                                     AND_WHEN("c <- refracted_color(w, comps, 5)") {
                                         auto c = refracted_color(w, comps, 5);
-                                        THEN("c = color(0, 0.998885, 0.0472195)") {
-                                            REQUIRE(c == color(0, 0.998885, 0.0472195));
+                                        THEN("c = color(0, 0.998875, 0.047219)") {
+                                            REQUIRE(c == color(0, 0.998875, 0.047219));
                                         }
                                     }
                                 }
