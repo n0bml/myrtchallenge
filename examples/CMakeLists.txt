@@ -18,6 +18,11 @@ target_include_directories(casting PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(casting PRIVATE ${LIBPNG_LIBRARY_DIRS})
 target_link_libraries(casting PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
 
+add_executable(glass_sphere glass_sphere.cpp)
+target_include_directories(glass_sphere PRIVATE ${LIBPNG_INCLUDE_DIRS})
+target_link_directories(glass_sphere PRIVATE ${LIBPNG_LIBRARY_DIRS})
+target_link_libraries(glass_sphere PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
+
 add_executable(patterns patterns.cpp)
 target_include_directories(patterns PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(patterns PRIVATE ${LIBPNG_LIBRARY_DIRS})
@@ -37,6 +42,11 @@ add_executable(puppets puppets.cpp)
 target_include_directories(puppets PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(puppets PRIVATE ${LIBPNG_LIBRARY_DIRS})
 target_link_libraries(puppets PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
+
+add_executable(reflect_refract reflect_refract.cpp)
+target_include_directories(reflect_refract PRIVATE ${LIBPNG_INCLUDE_DIRS})
+target_link_directories(reflect_refract PRIVATE ${LIBPNG_LIBRARY_DIRS})
+target_link_libraries(reflect_refract PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
 
 add_executable(scene scene.cpp)
 target_include_directories(scene PRIVATE ${LIBPNG_INCLUDE_DIRS})
