@@ -451,3 +451,69 @@ SCENARIO("The under point is offset below the surface.", "[intersections]") {
         }
     }
 }
+
+
+SCENARIO("The Schlick approximation under total internal reflection.", "[intersections]") {
+    GIVEN("shape <- glass_sphere()") {
+        auto shape = glass_sphere();
+        AND_GIVEN("r <- ray(point(0, 0, -√2/2), vector(0, 1, 0))") {
+            auto r = ray(point(0, 0, -M_SQRT2/2), vector(0, 1, 0));
+            AND_GIVEN("xs <- intersections(-√2/2:shape, √2/2:shape)") {
+                auto xs = intersections({{-M_SQRT2/2, shape}, {M_SQRT2/2, shape}});
+                WHEN("comps <- prepare_computations(xs[1], r, xs)") {
+                    auto comps = prepare_computations(xs[1], r, xs);
+                    AND_WHEN("reflectance <- schlick(comps)") {
+                        auto reflectance = schlick(comps);
+                        THEN("reflectance = 1.0") {
+                            REQUIRE(reflectance == 1.0);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The Schlick approximation with a perpendicular viewing angle.", "[intersections]") {
+    GIVEN("shape <- glass_sphere()") {
+        auto shape = glass_sphere();
+        AND_GIVEN("r <- ray(point(0, 0, 0), vector(0, 1, 0))") {
+            auto r = ray(point(0, 0, 0), vector(0, 1, 0));
+            AND_GIVEN("xs <- intersections(-1:shape, 1:shape)") {
+                auto xs = intersections({{-1, shape}, {1, shape}});
+                WHEN("comps <- prepare_computations(xs[1], r, xs)") {
+                    auto comps = prepare_computations(xs[1], r, xs);
+                    AND_WHEN("reflectance <- schlick(comps)") {
+                        auto reflectance = schlick(comps);
+                        THEN("reflectance = 0.04") {
+                            REQUIRE(equal(reflectance, 0.04));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("The Schlick approximation with small angle and n2 > n1.", "[intersections]") {
+    GIVEN("shape <- glass_sphere()") {
+        auto shape = glass_sphere();
+        AND_GIVEN("r <- ray(point(0, 0.99, -2), vector(0, 0, 1))") {
+            auto r = ray(point(0, 0.99, -2), vector(0, 0, 1));
+            AND_GIVEN("xs <- intersections(1.8589:shape)") {
+                auto xs = intersections({{1.8589, shape}});
+                WHEN("comps <- prepare_computations(xs[0], r, xs)") {
+                    auto comps = prepare_computations(xs[0], r, xs);
+                    AND_WHEN("reflectance <- schlick(comps)") {
+                        auto reflectance = schlick(comps);
+                        THEN("reflectance = 0.48873") {
+                            REQUIRE(equal(reflectance, 0.48873));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

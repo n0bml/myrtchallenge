@@ -99,3 +99,28 @@ Computations prepare_computations(const Intersection& i, const Ray& ray, const I
 
     return comps;
 }
+
+
+double_t schlick(const Computations& comps)
+{
+    // find the cosine of the angle between the eye and normal vectors
+    auto cos = dot(comps.eyev, comps.normalv);
+
+    // total internal reflection can only occurs if n1 > n2
+    if (comps.n1 > comps.n2) {
+        auto n = comps.n1 / comps.n2;
+        auto sin2_t = std::pow(n, 2) * (1.0 - std::pow(cos, 2));
+        if (sin2_t > 1.0)
+            return 1.0;
+
+        // compute cosine of theta_t using trig identity
+        auto cos_t = std::sqrt(1.0 - sin2_t);
+
+        // when n1 > n2, use cos(theta_t) instead
+        cos = cos_t;
+    }
+
+    auto r0 = std::pow((comps.n1 - comps.n2) / (comps.n1 + comps.n2), 2);
+
+    return r0 + (1 - r0) * std::pow(1 - cos, 5);
+}

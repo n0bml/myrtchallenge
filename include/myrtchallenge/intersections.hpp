@@ -55,3 +55,4 @@ struct Computations
 
 
 Computations prepare_computations(const Intersection& i, const Ray& ray, const Intersections& xs = std::vector<Intersection>{});
+double_t schlick(const Computations& comps);

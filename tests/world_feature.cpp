@@ -576,3 +576,44 @@ SCENARIO("shade_hit() with a transparent material", "[world]") {
         }
     }
 }
+
+
+SCENARIO("shade_hit() with a reflective, transparent material.", "[world]") {
+    GIVEN("w <- default_world()") {
+        auto w = default_world();
+        AND_GIVEN("r <- ray(point(0, 0, -3), vector(0, -√2/2, √2/2))") {
+            auto r = ray(point(0, 0, -3), vector(0, -M_SQRT2/2, M_SQRT2/2));
+            AND_GIVEN("floor <- plane()...") {
+                auto floor = plane();
+                floor->transform = translation(0, -1, 0);
+                floor->material->reflective = 0.5;
+                floor->material->transparency = 0.5;
+                floor->material->refractive_index = 1.5;
+                AND_GIVEN("floor is added to w") {
+                    w->objects.push_back(floor);
+                    AND_GIVEN("ball <- sphere()...") {
+                        auto ball = sphere();
+                        ball->material->color = color(1, 0, 0);
+                        ball->material->ambient = 0.5;
+                        ball->transform = translation(0, -3.5, -0.5);
+                        AND_GIVEN("ball is added to w") {
+                            w->objects.push_back(ball);
+                            AND_GIVEN("xs <- intersections(√2:floor)") {
+                                auto xs = intersections({{M_SQRT2, floor}});
+                                WHEN("comps <- prepare_computations(xs[0], r, xs)") {
+                                    auto comps = prepare_computations(xs[0], r, xs);
+                                    AND_WHEN("c <- shade_hit(w, comps, 5)") {
+                                        auto c = shade_hit(w, comps, 5);
+                                        THEN("c == color(0.93391, 0.69643, 0.69243)") {
+                                            REQUIRE(c == color(0.93391, 0.69643, 0.69243));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

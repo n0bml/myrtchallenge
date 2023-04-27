@@ -131,8 +131,17 @@ Color refracted_color(const World_Ptr& world, const Computations& comps, int rem
 Color shade_hit(const World_Ptr& world, const Computations& comps, int remaining)
 {
     auto shadowed = is_shadowed(world, comps.over_point);
+
     auto surface = lighting(comps.object->material, comps.object, world->light, comps.point, comps.eyev, comps.normalv, shadowed);
+
     auto reflected = reflected_color(world, comps, remaining);
     auto refracted = refracted_color(world, comps, remaining);
-    return surface + reflected + refracted;
+
+    auto material = comps.object->material;
+    if (material->reflective > 0 && material->transparency > 0) {
+        auto reflectance = schlick(comps);
+        return surface + reflected * reflectance + refracted * (1 - reflectance);
+    }
+    else
+        return surface + reflected + refracted;
 }
