@@ -58,6 +58,11 @@ target_include_directories(shading PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(shading PRIVATE ${LIBPNG_LIBRARY_DIRS})
 target_link_libraries(shading PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
 
+add_executable(table table.cpp)
+target_include_directories(table PRIVATE ${LIBPNG_INCLUDE_DIRS})
+target_link_directories(table PRIVATE ${LIBPNG_LIBRARY_DIRS})
+target_link_libraries(table PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
+
 add_executable(ticker ticker.cpp)
 target_include_directories(ticker PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(ticker PRIVATE ${LIBPNG_LIBRARY_DIRS})

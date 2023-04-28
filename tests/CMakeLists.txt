@@ -4,7 +4,7 @@ enable_testing()
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG v3.1.0)
+  GIT_TAG v3.3.2)
 FetchContent_MakeAvailable(Catch2)
 # Adds Catch2::Catch2
 
@@ -12,6 +12,11 @@ add_executable(camera_feature camera_feature.cpp)
 target_compile_features(camera_feature PRIVATE cxx_std_20)
 target_link_libraries(camera_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME camera_feature COMMAND camera_feature)
+
+add_executable(cubes_feature cubes_feature.cpp)
+target_compile_features(cubes_feature PRIVATE cxx_std_20)
+target_link_libraries(cubes_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME cubes_feature COMMAND cubes_feature)
 
 add_executable(canvas_feature canvas_feature.cpp)
 target_compile_features(canvas_feature PRIVATE cxx_std_20)

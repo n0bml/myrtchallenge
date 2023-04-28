@@ -5,11 +5,33 @@
  * @copyright Copyright 2022 by Brendan Leber.  Some rights reserved, see LICENSE.
  */
 
+#include <algorithm>
 #include <cmath>
 
 #include "myrtchallenge/shapes.hpp"
 
 #include "primitives.hpp"
+
+
+std::pair<double_t, double_t> check_axis(double_t origin, double_t direction)
+{
+    auto tmin_numerator = (-1 - origin);
+    auto tmax_numerator = ( 1 - origin);
+
+    double_t tmin, tmax;
+    if (std::fabs(direction) >= EPSILON) {
+        tmin = tmin_numerator / direction;
+        tmax = tmax_numerator / direction;
+    } else {
+        tmin = tmin_numerator * INFINITY;
+        tmax = tmax_numerator * INFINITY;
+    }
+
+    if (tmin > tmax)
+        std::swap(tmin, tmax);
+
+    return std::make_pair(tmin, tmax);
+}
 
 
 bool Shape::operator==(const Shape& rhs) const
@@ -70,6 +92,63 @@ void set_transform(Shape_Ptr shape, const Matrix& m)
 
 
 /**
+ * @brief Construct and return a shared pointer to a Cube.
+ *
+ * @return Shape_Ptr
+ */
+Shape_Ptr cube()
+{
+    auto ptr = std::make_shared<Cube>();
+    ptr->transform = identity_matrix();
+    ptr->material = material();
+    return ptr;
+}
+
+
+/**
+ * @brief Return the intersections between the ray and the Cube.
+ *
+ * @param ray
+ * @return Intersections
+ */
+Intersections Cube::local_intersect(const Ray& ray)
+{
+    auto [xtmin, xtmax] = check_axis(ray.origin.x, ray.direction.x);
+    auto [ytmin, ytmax] = check_axis(ray.origin.y, ray.direction.y);
+    auto [ztmin, ztmax] = check_axis(ray.origin.z, ray.direction.z);
+
+    auto tmin = std::max({xtmin, ytmin, ztmin});
+    auto tmax = std::min({xtmax, ytmax, ztmax});
+
+    Intersections results;
+    if (tmin <= tmax) {
+        results.emplace_back(intersection(tmin, shared_from_this()));
+        results.emplace_back(intersection(tmax, shared_from_this()));
+    }
+    return results;
+}
+
+
+/**
+ * @brief Return the local normal at the given point.
+ *
+ * @param pt
+ * @return Tuple
+ */
+Tuple Cube::local_normal_at(const Tuple& pt) const
+{
+    auto maxc = std::max({std::fabs(pt.x), std::fabs(pt.y), std::fabs(pt.z)});
+    if (maxc == std::fabs(pt.x)) {
+        return vector(pt.x, 0, 0);
+    } else if (maxc == std::fabs(pt.y)) {
+        return vector(0, pt.y, 0);
+    } else {
+        return vector(0, 0, pt.z);
+    }
+}
+
+
+/**
  * @brief Construct and return a shared pointer to a Plane.
  *
  * @return Shape_Ptr
@@ -84,7 +163,7 @@ Shape_Ptr plane()
 
 
 /**
- * @brief Return the intersections between the ray and the Sphere.
+ * @brief Return the intersections between the ray and the Plane.
  *
  * @param ray
  * @return Intersections
