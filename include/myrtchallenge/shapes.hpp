@@ -31,6 +31,13 @@ struct Shape : std::enable_shared_from_this<Shape>
 };
 
 
+struct Cube : public Shape
+{
+    Intersections local_intersect(const Ray& ray);
+    Tuple local_normal_at(const Tuple& point) const;
+};
+
+
 struct Plane : public Shape
 {
     Intersections local_intersect(const Ray& ray);
@@ -48,6 +55,7 @@ struct Sphere : public Shape
 using Shape_Ptr = std::shared_ptr<Shape>;
 
 
+Shape_Ptr cube();
 Shape_Ptr plane();
 Shape_Ptr sphere();
 Shape_Ptr glass_sphere();

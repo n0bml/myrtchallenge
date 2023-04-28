@@ -10,7 +10,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
 
-#include "../../src/primitives.hpp"
+#include "../src/primitives.hpp"
 #include <myrtchallenge/rays.hpp>
 #include <myrtchallenge/shapes.hpp>
 #include <myrtchallenge/transformations.hpp>
