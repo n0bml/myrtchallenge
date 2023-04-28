@@ -93,3 +93,35 @@ SCENARIO("A ray misses a cube.", "[cubes]") {
         }
     }
 }
+
+
+SCENARIO("The normal on the surface of a cube.", "[cubes]") {
+    struct Test_Case {
+        Tuple pt;
+        Tuple tnormal;
+    };
+
+    std::vector<Test_Case> test_cases {
+        { point( 1,    0.5, -0.8), vector( 1, 0,  0) },
+        { point(-1,   -0.2,  0.9), vector(-1, 0,  0) },
+        { point(-0.4,  1,   -0.1), vector( 0, 1,  0) },
+        { point( 0.3, -1,   -0.7), vector( 0, 1,  0) },
+        { point(-0.6,  0.3,  1),   vector( 0, 0,  1) },
+        { point( 0.4,  0.4, -1),   vector( 0, 0, -1) },
+        { point( 1,    1,    1),   vector( 1, 0,  0) },
+        { point(-1,   -1,   -1),   vector(-1, 0,  0) }
+    };
+
+    GIVEN("c <- cube()") {
+        auto c = cube();
+
+        for (auto&& [pt, tnormal] : test_cases) {
+            WHEN("normal <- local_normal(c, <pt>)") {
+                auto normal = c->local_normal_at(pt);
+                THEN("normal = <normal>") {
+                    REQUIRE(normal == tnormal);
+                }
+            }
+        }
+    }
+}

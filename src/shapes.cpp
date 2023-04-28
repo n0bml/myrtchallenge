@@ -132,12 +132,19 @@ Intersections Cube::local_intersect(const Ray& ray)
 /**
  * @brief Return the local normal at the given point.
  *
- * @param pt - unused
+ * @param pt
  * @return Tuple
  */
-Tuple Cube::local_normal_at(const Tuple& /*pt*/) const
+Tuple Cube::local_normal_at(const Tuple& pt) const
 {
-    return vector(0, 1, 0);
+    auto maxc = std::max({std::fabs(pt.x), std::fabs(pt.y), std::fabs(pt.z)});
+    if (maxc == std::fabs(pt.x)) {
+        return vector(pt.x, 0, 0);
+    } else if (maxc == std::fabs(pt.y)) {
+        return vector(0, pt.y, 0);
+    } else {
+        return vector(0, 0, pt.z);
+    }
 }
 
 
