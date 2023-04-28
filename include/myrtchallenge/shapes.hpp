@@ -38,6 +38,13 @@ struct Cube : public Shape
 };
 
 
+struct Cylinder : public Shape
+{
+    Intersections local_intersect(const Ray& ray);
+    Tuple local_normal_at(const Tuple& point) const;
+};
+
+
 struct Plane : public Shape
 {
     Intersections local_intersect(const Ray& ray);
@@ -56,6 +63,7 @@ using Shape_Ptr = std::shared_ptr<Shape>;
 
 
 Shape_Ptr cube();
+Shape_Ptr cylinder();
 Shape_Ptr plane();
 Shape_Ptr sphere();
 Shape_Ptr glass_sphere();

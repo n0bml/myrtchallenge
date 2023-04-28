@@ -18,6 +18,11 @@ target_compile_features(cubes_feature PRIVATE cxx_std_20)
 target_link_libraries(cubes_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME cubes_feature COMMAND cubes_feature)
 
+add_executable(cylinders_feature cylinders_feature.cpp)
+target_compile_features(cylinders_feature PRIVATE cxx_std_20)
+target_link_libraries(cylinders_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME cylinders_feature COMMAND cylinders_feature)
+
 add_executable(canvas_feature canvas_feature.cpp)
 target_compile_features(canvas_feature PRIVATE cxx_std_20)
 target_link_libraries(canvas_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)

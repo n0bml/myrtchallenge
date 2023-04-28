@@ -149,6 +149,66 @@ Tuple Cube::local_normal_at(const Tuple& pt) const
 
 
 /**
+ * @brief Construct and return a shared pointer to a Cylinder.
+ *
+ * @return Shape_Ptr
+ */
+Shape_Ptr cylinder()
+{
+    auto ptr = std::make_shared<Cylinder>();
+    ptr->transform = identity_matrix();
+    ptr->material = material();
+    return ptr;
+}
+
+
+/**
+ * @brief Return the intersections between the ray and the Cylinder.
+ *
+ * @param ray
+ * @return Intersections
+ */
+Intersections Cylinder::local_intersect(const Ray& ray)
+{
+    Intersections results;
+    auto a = std::pow(ray.direction.x, 2) + std::pow(ray.direction.z, 2);
+
+    // ray is parallel to the y axis
+    if (equal(a, 0))
+        return results;
+
+    auto b = 2 * ray.origin.x * ray.direction.x + 2 * ray.origin.z * ray.direction.z;
+    auto c = std::pow(ray.origin.x, 2) + std::pow(ray.origin.z, 2) - 1;
+
+    auto disc = std::pow(b, 2) - 4 * a * c;
+
+    // ray does not intersesect cylinder
+    if (disc < 0)
+        return results;
+
+    auto t0 = (-b - std::sqrt(disc)) / (2 * a);
+    auto t1 = (-b + std::sqrt(disc)) / (2 * a);
+
+    results.emplace_back(intersection(t0, shared_from_this()));
+    results.emplace_back(intersection(t1, shared_from_this()));
+    return results;
+}
+
+
+/**
+ * @brief Return the local normal at the given point.
+ *
+ * @param pt - unused
+ * @return Tuple
+ */
+Tuple Cylinder::local_normal_at(const Tuple& /*pt*/) const
+{
+    return vector(0, 1, 0);
+}
+
+
+
+/**
  * @brief Construct and return a shared pointer to a Plane.
  *
  * @return Shape_Ptr
