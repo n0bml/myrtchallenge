@@ -40,6 +40,9 @@ struct Cube : public Shape
 
 struct Cylinder : public Shape
 {
+    double_t minimum{-INFINITY};
+    double_t maximum{INFINITY};
+
     Intersections local_intersect(const Ray& ray);
     Tuple local_normal_at(const Tuple& point) const;
 };

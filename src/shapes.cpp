@@ -189,8 +189,14 @@ Intersections Cylinder::local_intersect(const Ray& ray)
     auto t0 = (-b - std::sqrt(disc)) / (2 * a);
     auto t1 = (-b + std::sqrt(disc)) / (2 * a);
 
-    results.emplace_back(intersection(t0, shared_from_this()));
-    results.emplace_back(intersection(t1, shared_from_this()));
+    auto y0 = ray.origin.y + t0 * ray.direction.y;
+    if (minimum < y0 && y0 < maximum)
+        results.emplace_back(intersection(t0, shared_from_this()));
+
+    auto y1 = ray.origin.y + t1 * ray.direction.y;
+    if (minimum < y1 && y1 < maximum)
+        results.emplace_back(intersection(t1, shared_from_this()));
+
     return results;
 }
 

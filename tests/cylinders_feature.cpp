@@ -120,3 +120,58 @@ SCENARIO("Normal vector on a cylinder.", "[cylinders]") {
         }
     }
 }
+
+
+SCENARIO("The default minimum and maximum for a cylinder.", "[cylinders]") {
+    GIVEN("cyl <- cylinder()") {
+        auto cyl = std::dynamic_pointer_cast<Cylinder>(cylinder());
+        THEN("cyl.minimum = -infinity") {
+            REQUIRE(cyl->minimum == -INFINITY);
+            AND_THEN("cyl.maximum = infinity") {
+                REQUIRE(cyl->maximum == INFINITY);
+            }
+        }
+    }
+}
+
+
+SCENARIO("Intersecting a constrained cylinder.", "[cylinders]") {
+    struct Test_Case {
+        Tuple tpoint;
+        Tuple tdirection;
+        size_t count;
+    };
+
+    std::vector<Test_Case> test_cases {
+        { point(0, 1.5,  0), vector(0.1, 1, 0), 0 },
+        { point(0, 3,   -5), vector(0,   0, 1), 0 },
+        { point(0, 0,   -5), vector(0,   0, 1), 0 },
+        { point(0, 2,   -5), vector(0,   0, 1), 0 },
+        { point(0, 1,   -5), vector(0,   0, 1), 0 },
+        { point(0, 1.5, -2), vector(0,   0, 1), 2 },
+    };
+
+    GIVEN("cyl <- cylinder()") {
+        auto cyl = std::dynamic_pointer_cast<Cylinder>(cylinder());
+        AND_GIVEN("cyl.minimum <- 1") {
+            cyl->minimum = 1;
+            AND_GIVEN("cyl.maximum <- 2") {
+                cyl->maximum = 2;
+                for (auto&& [tpt, td, tc] : test_cases) {
+                    WHEN("direction <- normalize(<direction>)") {
+                        auto direction = normalize(td);
+                        AND_WHEN("r <- ray(<pt>, direction)") {
+                            auto r = ray(tpt, direction);
+                            AND_WHEN("xs <- local_intersect(cyl, r)") {
+                                auto xs = cyl->local_intersect(r);
+                                THEN("xs.count = <count>") {
+                                    REQUIRE(xs.size() == tc);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
