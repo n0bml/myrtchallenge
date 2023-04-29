@@ -198,12 +198,12 @@ Intersections Cylinder::local_intersect(const Ray& ray)
 /**
  * @brief Return the local normal at the given point.
  *
- * @param pt - unused
+ * @param pt
  * @return Tuple
  */
-Tuple Cylinder::local_normal_at(const Tuple& /*pt*/) const
+Tuple Cylinder::local_normal_at(const Tuple& pt) const
 {
-    return vector(0, 1, 0);
+    return vector(pt.x, 0, pt.z);
 }
 
 

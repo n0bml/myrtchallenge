@@ -92,3 +92,31 @@ SCENARIO("A ray strikes a cylinder.", "[cylinders]") {
         }
     }
 }
+
+
+SCENARIO("Normal vector on a cylinder.", "[cylinders]") {
+    struct Test_Case {
+        Tuple pt;
+        Tuple tnormal;
+    };
+
+    std::vector<Test_Case> test_cases {
+        { point( 1,  0,  0), vector( 1, 0, 0) },
+        { point( 0,  5, -1), vector( 0, 0, 1) },
+        { point( 0, -2,  1), vector( 0, 0, 1) },
+        { point(-1,  1,  0), vector(-1, 0, 0) },
+    };
+
+    GIVEN("cyl <- cylinder()") {
+        auto cyl = cylinder();
+
+        for (auto&& [pt, tnormal] : test_cases) {
+            WHEN("normal <- local_normal_at(cyl, <pt>)") {
+                auto normal = cyl->local_normal_at(pt);
+                THEN("normal = <normal>") {
+                    REQUIRE(normal == tnormal);
+                }
+            }
+        }
+    }
+}
