@@ -51,6 +51,14 @@ struct Cylinder : public Shape
 };
 
 
+// a cone is a special form of a cylinder
+struct Cone : public Cylinder
+{
+    Intersections local_intersect(const Ray& ray);
+    Tuple local_normal_at(const Tuple& point) const;
+};
+
+
 struct Plane : public Shape
 {
     Intersections local_intersect(const Ray& ray);
@@ -68,6 +76,7 @@ struct Sphere : public Shape
 using Shape_Ptr = std::shared_ptr<Shape>;
 
 
+Shape_Ptr cone();
 Shape_Ptr cube();
 Shape_Ptr cylinder();
 Shape_Ptr plane();

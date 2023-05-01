@@ -100,6 +100,89 @@ void set_transform(Shape_Ptr shape, const Matrix& m)
 
 
 /**
+ * @brief Construct and return a shared pointer to a Cone.
+ *
+ * @return Shape_Ptr
+ */
+Shape_Ptr cone()
+{
+    auto ptr = std::make_shared<Cone>();
+    ptr->transform = identity_matrix();
+    ptr->material = material();
+    return ptr;
+}
+
+
+/**
+ * @brief Return the intersections between the ray and the Cone.
+ *
+ * @param ray
+ * @return Intersections
+ */
+Intersections Cone::local_intersect(const Ray& ray)
+{
+    Intersections results;
+    intersect_caps(ray, results);
+
+    auto a = std::pow(ray.direction.x, 2) - std::pow(ray.direction.y, 2) + std::pow(ray.direction.z, 2);
+    auto b = 2 * ray.origin.x * ray.direction.x - 2 * ray.origin.y * ray.direction.y + 2 * ray.origin.z * ray.direction.z;
+    auto c = std::pow(ray.origin.x, 2) - std::pow(ray.origin.y, 2) + std::pow(ray.origin.z, 2);
+
+    if (equal(a, 0)) {
+        if (!equal(b, 0)) {
+            auto t = -c / (2 * b);
+            results.emplace_back(Intersection{t, shared_from_this()});
+        }
+        return results;
+    }
+
+    auto disc = std::pow(b, 2) - 4 * a * c;
+
+    // ray does not intersect cone
+    if (disc < 0)
+        return results;
+
+    auto t0 = (-b - std::sqrt(disc)) / (2 * a);
+    auto t1 = (-b + std::sqrt(disc)) / (2 * a);
+    if (t0 > t1)
+        std::swap(t0, t1);
+
+    auto y0 = ray.origin.y + t0 * ray.direction.y;
+    if (minimum < y0 && y0 < maximum)
+        results.emplace_back(Intersection{t0, shared_from_this()});
+
+    auto y1 = ray.origin.y + t1 * ray.direction.y;
+    if (minimum < y1 && y1 < maximum)
+        results.emplace_back(Intersection{t1, shared_from_this()});
+
+    return results;
+}
+
+
+/**
+ * @brief Return the local normal at the given point.
+ *
+ * @param pt
+ * @return Tuple
+ */
+Tuple Cone::local_normal_at(const Tuple& pt) const
+{
+    // compute the square of the distance from the y axis
+    auto dist = std::pow(pt.x, 2) + std::pow(pt.z, 2);
+    if (dist < 1 && pt.y >= (maximum - EPSILON))
+        return vector(0, 1, 0);
+    else if (dist < 1 && pt.y <= (minimum + EPSILON))
+        return vector(0, -1, 0);
+
+    auto y = std::sqrt(std::pow(pt.x, 2) + std::pow(pt.z, 2));
+    if (pt.y > 0)
+        y = -y;
+    return vector(pt.x, y, pt.z);
+}
+
+
+
+/**
  * @brief Construct and return a shared pointer to a Cube.
  *
  * @return Shape_Ptr
