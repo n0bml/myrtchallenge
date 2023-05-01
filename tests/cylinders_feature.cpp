@@ -175,3 +175,95 @@ SCENARIO("Intersecting a constrained cylinder.", "[cylinders]") {
         }
     }
 }
+
+
+SCENARIO("The default closed value for a cylinder.", "[cylinders]") {
+    GIVEN("cyl <- cylinder()") {
+        auto cyl = std::dynamic_pointer_cast<Cylinder>(cylinder());
+        THEN("cyl.closed = false") {
+            REQUIRE(!cyl->closed);
+        }
+    }
+}
+
+
+SCENARIO("Intersecting the caps of a closed cylinder.", "[cylinders]") {
+    struct Test_Case {
+        Tuple tpoint;
+        Tuple tdirection;
+        size_t count;
+    };
+
+    std::vector<Test_Case> test_cases {
+        { point(0,  3,  0), vector(0, -1, 0), 2 },
+        { point(0,  3, -2), vector(0, -1, 2), 2 },
+        { point(0,  4, -2), vector(0, -1, 1), 2 },  // corner case
+        { point(0,  0, -2), vector(0,  1, 2), 2 },
+        { point(0, -1, -2), vector(0,  1, 1), 2 },  // corner case
+    };
+
+    GIVEN("cyl <- cylinder()") {
+        auto cyl = std::dynamic_pointer_cast<Cylinder>(cylinder());
+        AND_GIVEN("cyl.minimum <- 1") {
+            cyl->minimum = 1;
+            AND_GIVEN("cyl.maximum <- 2") {
+                cyl->maximum = 2;
+                AND_GIVEN("cyl.close <- true") {
+                    cyl->closed = true;
+                    for (auto&& [tpt, td, tc] : test_cases) {
+                        WHEN("direction <- normalize(<direction>)") {
+                            auto direction = normalize(td);
+                            AND_WHEN("r <- ray(<pt>, direction)") {
+                                auto r = ray(tpt, direction);
+                                AND_WHEN("xs <- local_intersect(cyl, r)") {
+                                    auto xs = cyl->local_intersect(r);
+                                    THEN("xs.count = <count>") {
+                                        REQUIRE(xs.size() == tc);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+SCENARIO("Normal vector on a cylinder's end caps.", "[cylinders]") {
+    struct Test_Case {
+        Tuple pt;
+        Tuple tnormal;
+    };
+
+    std::vector<Test_Case> test_cases {
+        { point(0,   1, 0  ), vector(0, -1, 0) },
+        { point(0.5, 1, 0  ), vector(0, -1, 0) },
+        { point(0,   1, 0.5), vector(0, -1, 0) },
+        { point(0,   2, 0  ), vector(0,  1, 0) },
+        { point(0.5, 2, 0  ), vector(0,  1, 0) },
+        { point(0,   2, 0.5), vector(0,  1, 0) },
+    };
+
+    GIVEN("cyl <- cylinder()") {
+        auto cyl = std::dynamic_pointer_cast<Cylinder>(cylinder());
+        AND_GIVEN("cyl.minimum <- 1") {
+            cyl->minimum = 1;
+            AND_GIVEN("cyl.maximum <- 2") {
+                cyl->maximum = 2;
+                AND_GIVEN("cyl.closet <- true") {
+                    cyl->closed = true;
+                    for (auto&& [pt, tnormal] : test_cases) {
+                        WHEN("normal <- local_normal_at(cyl, <pt>)") {
+                            auto normal = cyl->local_normal_at(pt);
+                            THEN("normal = <normal>") {
+                                REQUIRE(normal == tnormal);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

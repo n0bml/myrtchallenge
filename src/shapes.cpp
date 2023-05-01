@@ -34,6 +34,14 @@ std::pair<double_t, double_t> check_axis(double_t origin, double_t direction)
 }
 
 
+bool check_cap(const Ray& ray, double_t t)
+{
+    auto x = ray.origin.x + t * ray.direction.x;
+    auto z = ray.origin.z + t * ray.direction.z;
+    return (std::pow(x, 2) + std::pow(z, 2)) <= 1;
+}
+
+
 bool Shape::operator==(const Shape& rhs) const
 {
     if (transform != rhs.transform) {
@@ -171,6 +179,8 @@ Shape_Ptr cylinder()
 Intersections Cylinder::local_intersect(const Ray& ray)
 {
     Intersections results;
+    intersect_caps(ray, results);
+
     auto a = std::pow(ray.direction.x, 2) + std::pow(ray.direction.z, 2);
 
     // ray is parallel to the y axis
@@ -209,9 +219,36 @@ Intersections Cylinder::local_intersect(const Ray& ray)
  */
 Tuple Cylinder::local_normal_at(const Tuple& pt) const
 {
-    return vector(pt.x, 0, pt.z);
+    // compute the square of the distance from the y axis
+    auto dist = std::pow(pt.x, 2) + std::pow(pt.z, 2);
+    if (dist < 1 && pt.y >= (maximum - EPSILON))
+        return vector(0, 1, 0);
+    else if (dist < 1 && pt.y <= (maximum + EPSILON))
+        return vector(0, -1, 0);
+    else
+        return vector(pt.x, 0, pt.z);
 }
 
+
+void Cylinder::intersect_caps(const Ray& ray, Intersections& xs)
+{
+    // caps only matter if the cylinder is closed, and might possibly be
+    // intersected by the ray
+    if (!closed || equal(ray.direction.y, 0))
+        return;
+
+    // check for an intersection with the lower end cap by intersecting
+    // the ray with the plane at y=cyl.minimum
+    auto t = (minimum - ray.origin.y) / ray.direction.y;
+    if (check_cap(ray, t))
+        xs.emplace_back(Intersection{t, shared_from_this()});
+
+    // check for an intersection with the upper end cap by intersecting
+    // the ray with the plane at y=cyl.maximum
+    t = (maximum - ray.origin.y) / ray.direction.y;
+    if (check_cap(ray, t))
+        xs.emplace_back(Intersection{t, shared_from_this()});
+}
 
 
 /**

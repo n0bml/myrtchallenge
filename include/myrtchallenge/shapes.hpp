@@ -42,9 +42,12 @@ struct Cylinder : public Shape
 {
     double_t minimum{-INFINITY};
     double_t maximum{INFINITY};
+    bool closed{false};
 
     Intersections local_intersect(const Ray& ray);
     Tuple local_normal_at(const Tuple& point) const;
+
+    void intersect_caps(const Ray& ray, Intersections& xs);
 };
 
 
