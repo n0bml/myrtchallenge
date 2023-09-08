@@ -18,6 +18,11 @@ target_include_directories(casting PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(casting PRIVATE ${LIBPNG_LIBRARY_DIRS})
 target_link_libraries(casting PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
 
+add_executable(cylinders cylinders.cpp)
+target_include_directories(cylinders PRIVATE ${LIBPNG_INCLUDE_DIRS})
+target_link_directories(cylinders PRIVATE ${LIBPNG_LIBRARY_DIRS})
+target_link_libraries(cylinders PRIVATE myrtchallenge ${LIBPNG_LIBRARIES})
+
 add_executable(glass_sphere glass_sphere.cpp)
 target_include_directories(glass_sphere PRIVATE ${LIBPNG_INCLUDE_DIRS})
 target_link_directories(glass_sphere PRIVATE ${LIBPNG_LIBRARY_DIRS})

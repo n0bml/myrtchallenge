@@ -20,33 +20,30 @@
 
 
 SCENARIO("A ray misses a cylinder.", "[cylinders]") {
-    struct Test_Case {
-        Tuple origin;
-        Tuple direction;
-    };
-
-    std::vector<Test_Case> test_cases {
-        { point(1, 0,  0), vector(0, 1, 0) },
-        { point(0, 0,  0), vector(0, 1, 0) },
-        { point(0, 0, -5), vector(1, 1, 1) }
-    };
-
     GIVEN("cyl <- cylinder()") {
         auto cyl = cylinder();
 
-        for (auto&& [to, td] : test_cases) {
-            WHEN("direction <- normalize(<direction>)") {
-                auto direction = normalize(td);
-                AND_WHEN("r <- ray(<origin>, direction)") {
-                    auto r = ray(to, direction);
-                    AND_WHEN("xs <- local_intersect(c, r)") {
-                        auto xs = cyl->local_intersect(r);
-                        THEN("xs.count = 0") {
-                            REQUIRE(xs.size() == 0);
-                            REQUIRE(xs.empty());
-                        }
-                    }
-                }
+        WHEN("xs <- local_intersect(cyl, ray(point(1, 0, 0), normalize(vector(0, 1, 0))))") {
+            auto xs = cyl->local_intersect(ray(point(1, 0, 0), normalize(vector(0, 1, 0))));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 0, 0), normalize(vector(0, 1, 0))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 0, 0), normalize(vector(0, 1, 0))));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 0, -5), normalize(vector(1, 1, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 0, -5), normalize(vector(1, 1, 1))));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
             }
         }
     }
@@ -54,40 +51,30 @@ SCENARIO("A ray misses a cylinder.", "[cylinders]") {
 
 
 SCENARIO("A ray strikes a cylinder.", "[cylinders]") {
-    struct Test_Case {
-        Tuple origin;
-        Tuple direction;
-        double_t t0;
-        double_t t1;
-    };
-
-    std::vector<Test_Case> test_cases {
-        { point(1,   0, -5), vector(0,   0,  1),  5,       5       },
-        { point(0,   0, -5), vector(0,   0,  1),  4,       6       },
-        { point(0.5, 0, -5), vector(0.1, 1,  1),  6.80798, 7.08872 },
-    };
-
     GIVEN("cyl <- cylinder()") {
         auto cyl = cylinder();
 
-        for (auto&& [to, td, t0, t1] : test_cases) {
-            WHEN("direction <- normalize(<direction>)") {
-                auto direction = normalize(td);
-                AND_WHEN("r <- ray(<origin>, direction)") {
-                    auto r = ray(to, direction);
-                    AND_WHEN("xs <- local_intersect(cyl, r)") {
-                        auto xs = cyl->local_intersect(r);
-                        THEN("xs.count = 2") {
-                            REQUIRE(xs.size() == 2);
-                            AND_THEN("xs[0].t = <t0>") {
-                                REQUIRE(xs[0].t == t0);
-                                AND_THEN("xs[1] = <t1>") {
-                                    REQUIRE(xs[1].t == t1);
-                                }
-                            }
-                        }
-                    }
-                }
+        WHEN("xs <- cyl.local_intersection(ray(point(1, 0, -5), normalize(vector(0, 0, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(1, 0, -5), normalize(vector(0, 0, 1))));
+            THEN("x[0].t = 5 and x[1].t = 5") {
+                REQUIRE(equal(xs[0].t, 5));
+                REQUIRE(equal(xs[1].t, 5));
+            }
+        }
+
+        WHEN("xs <- cyl.local_intersection(ray(point(0, 0, -5), normalize(vector(0, 0, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 0, -5), normalize(vector(0, 0, 1))));
+            THEN("x[0].t = 4 and x[1].t = 6") {
+                REQUIRE(equal(xs[0].t, 4));
+                REQUIRE(equal(xs[1].t, 6));
+            }
+        }
+
+        WHEN("xs <- cyl.local_intersection(ray(point(0.5, 0, -5), normalize(vector(0.1, 1, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0.5, 0, -5), normalize(vector(0.1, 1, 1))));
+            THEN("x[0].t = 6.80798 and x[1].t = 7.08872") {
+                REQUIRE(equal(xs[0].t, 6.80798));
+                REQUIRE(equal(xs[1].t, 7.08872));
             }
         }
     }
@@ -95,27 +82,34 @@ SCENARIO("A ray strikes a cylinder.", "[cylinders]") {
 
 
 SCENARIO("Normal vector on a cylinder.", "[cylinders]") {
-    struct Test_Case {
-        Tuple pt;
-        Tuple tnormal;
-    };
-
-    std::vector<Test_Case> test_cases {
-        { point( 1,  0,  0), vector( 1, 0, 0) },
-        { point( 0,  5, -1), vector( 0, 0, 1) },
-        { point( 0, -2,  1), vector( 0, 0, 1) },
-        { point(-1,  1,  0), vector(-1, 0, 0) },
-    };
-
     GIVEN("cyl <- cylinder()") {
         auto cyl = cylinder();
 
-        for (auto&& [pt, tnormal] : test_cases) {
-            WHEN("normal <- local_normal_at(cyl, <pt>)") {
-                auto normal = cyl->local_normal_at(pt);
-                THEN("normal = <normal>") {
-                    REQUIRE(normal == tnormal);
-                }
+        WHEN("normal <- local_normal_at(cyl, point(1, 0, 0))") {
+            auto normal = cyl->local_normal_at(point(1, 0, 0));
+            THEN("normal = vector(1, 0, 0)") {
+                REQUIRE(normal == vector(1, 0, 0));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(cyl, point(0, 5, -1))") {
+            auto normal = cyl->local_normal_at(point(0, 5, -1));
+            THEN("normal = vector(0, 0, -1)") {
+                REQUIRE(normal == vector(0, 0, -1));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(cyl, point(0, -2, 1))") {
+            auto normal = cyl->local_normal_at(point(0, -2, 1));
+            THEN("normal = vector(0, 0, 1)") {
+                REQUIRE(normal == vector(0, 0, 1));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(cyl, point(-1, 1, 0))") {
+            auto normal = cyl->local_normal_at(point(-1, 1, 0));
+            THEN("normal = vector(-1, 0, 0)") {
+                REQUIRE(normal == vector(-1, 0, 0));
             }
         }
     }
@@ -136,43 +130,59 @@ SCENARIO("The default minimum and maximum for a cylinder.", "[cylinders]") {
 
 
 SCENARIO("Intersecting a constrained cylinder.", "[cylinders]") {
-    struct Test_Case {
-        Tuple tpoint;
-        Tuple tdirection;
-        size_t count;
-    };
-
-    std::vector<Test_Case> test_cases {
-        { point(0, 1.5,  0), vector(0.1, 1, 0), 0 },
-        { point(0, 3,   -5), vector(0,   0, 1), 0 },
-        { point(0, 0,   -5), vector(0,   0, 1), 0 },
-        { point(0, 2,   -5), vector(0,   0, 1), 0 },
-        { point(0, 1,   -5), vector(0,   0, 1), 0 },
-        { point(0, 1.5, -2), vector(0,   0, 1), 2 },
-    };
-
     GIVEN("cyl <- cylinder()") {
         auto cyl = std::dynamic_pointer_cast<Cylinder>(cylinder());
-        AND_GIVEN("cyl.minimum <- 1") {
-            cyl->minimum = 1;
-            AND_GIVEN("cyl.maximum <- 2") {
-                cyl->maximum = 2;
-                for (auto&& [tpt, td, tc] : test_cases) {
-                    WHEN("direction <- normalize(<direction>)") {
-                        auto direction = normalize(td);
-                        AND_WHEN("r <- ray(<pt>, direction)") {
-                            auto r = ray(tpt, direction);
-                            AND_WHEN("xs <- local_intersect(cyl, r)") {
-                                auto xs = cyl->local_intersect(r);
-                                THEN("xs.count = <count>") {
-                                    REQUIRE(xs.size() == tc);
-                                }
-                            }
-                        }
-                    }
-                }
+        cyl->minimum = 1;
+        cyl->maximum = 2;
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 1.5, 0), normalize(vector(0.1, 1, 0))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 1.5, 0), normalize(vector(0.1, 1, 0))));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
             }
         }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 3, -5), normalize(vector(0, 0, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 3, -5), normalize(vector(0, 0, 1))));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 0, -5), normalize(vector(0, 0, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 0, -5), normalize(vector(0, 0, 1))));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 2, -5), normalize(vector(0, 0, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 2, -5), normalize(vector(0, 0, 1))));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 1, -5), normalize(vector(0, 0, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 1.5, 0), normalize(vector(0.1, 1, 0))));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 1.5, -2), normalize(vector(0, 0, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 1.5, -2), normalize(vector(0, 0, 1))));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+                REQUIRE(!xs.empty());
+            }
+        }
+
     }
 }
 
@@ -188,43 +198,44 @@ SCENARIO("The default closed value for a cylinder.", "[cylinders]") {
 
 
 SCENARIO("Intersecting the caps of a closed cylinder.", "[cylinders]") {
-    struct Test_Case {
-        Tuple tpoint;
-        Tuple tdirection;
-        size_t count;
-    };
-
-    std::vector<Test_Case> test_cases {
-        { point(0,  3,  0), vector(0, -1, 0), 2 },
-        { point(0,  3, -2), vector(0, -1, 2), 2 },
-        { point(0,  4, -2), vector(0, -1, 1), 2 },  // corner case
-        { point(0,  0, -2), vector(0,  1, 2), 2 },
-        { point(0, -1, -2), vector(0,  1, 1), 2 },  // corner case
-    };
-
     GIVEN("cyl <- cylinder()") {
         auto cyl = std::dynamic_pointer_cast<Cylinder>(cylinder());
-        AND_GIVEN("cyl.minimum <- 1") {
-            cyl->minimum = 1;
-            AND_GIVEN("cyl.maximum <- 2") {
-                cyl->maximum = 2;
-                AND_GIVEN("cyl.close <- true") {
-                    cyl->closed = true;
-                    for (auto&& [tpt, td, tc] : test_cases) {
-                        WHEN("direction <- normalize(<direction>)") {
-                            auto direction = normalize(td);
-                            AND_WHEN("r <- ray(<pt>, direction)") {
-                                auto r = ray(tpt, direction);
-                                AND_WHEN("xs <- local_intersect(cyl, r)") {
-                                    auto xs = cyl->local_intersect(r);
-                                    THEN("xs.count = <count>") {
-                                        REQUIRE(xs.size() == tc);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+        cyl->minimum = 1;
+        cyl->maximum = 2;
+        cyl->closed = true;
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 3, 0), normalize(vector(0, -1, 0))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 3, 0), normalize(vector(0, -1, 0))));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 3, -2), normalize(vector(0, -1, 2))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 3, -2), normalize(vector(0, -1, 2))));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 4, -2), normalize(vector(0, -1, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 4, -2), normalize(vector(0, -1, 1))));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, 0, -2), normalize(vector(0, 1, 2))))") {
+            auto xs = cyl->local_intersect(ray(point(0, 0, -2), normalize(vector(0, 1, 2))));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+        }
+
+        WHEN("xs <- local_intersect(cyl, ray(point(0, -1, -2), normalize(vector(0, 1, 1))))") {
+            auto xs = cyl->local_intersect(ray(point(0, -1, -2), normalize(vector(0, 1, 1))));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
             }
         }
     }
@@ -232,37 +243,51 @@ SCENARIO("Intersecting the caps of a closed cylinder.", "[cylinders]") {
 
 
 SCENARIO("Normal vector on a cylinder's end caps.", "[cylinders]") {
-    struct Test_Case {
-        Tuple pt;
-        Tuple tnormal;
-    };
-
-    std::vector<Test_Case> test_cases {
-        { point(0,   1, 0  ), vector(0, -1, 0) },
-        { point(0.5, 1, 0  ), vector(0, -1, 0) },
-        { point(0,   1, 0.5), vector(0, -1, 0) },
-        { point(0,   2, 0  ), vector(0,  1, 0) },
-        { point(0.5, 2, 0  ), vector(0,  1, 0) },
-        { point(0,   2, 0.5), vector(0,  1, 0) },
-    };
-
     GIVEN("cyl <- cylinder()") {
         auto cyl = std::dynamic_pointer_cast<Cylinder>(cylinder());
-        AND_GIVEN("cyl.minimum <- 1") {
-            cyl->minimum = 1;
-            AND_GIVEN("cyl.maximum <- 2") {
-                cyl->maximum = 2;
-                AND_GIVEN("cyl.closet <- true") {
-                    cyl->closed = true;
-                    for (auto&& [pt, tnormal] : test_cases) {
-                        WHEN("normal <- local_normal_at(cyl, <pt>)") {
-                            auto normal = cyl->local_normal_at(pt);
-                            THEN("normal = <normal>") {
-                                REQUIRE(normal == tnormal);
-                            }
-                        }
-                    }
-                }
+        cyl->minimum = 1;
+        cyl->maximum = 2;
+        cyl->closed = true;
+
+        WHEN("normal = local_normal_at(cyl, point(0, 1, 0))") {
+            auto normal = cyl->local_normal_at(point(0, 1, 0));
+            THEN("normal = vector(0, -1, 0)") {
+                REQUIRE(normal == vector(0, -1, 0));
+            }
+        }
+
+        WHEN("normal = local_normal_at(cyl, point(0.5, 1, 0))") {
+            auto normal = cyl->local_normal_at(point(0.5, 1, 0));
+            THEN("normal = vector(0, -1, 0)") {
+                REQUIRE(normal == vector(0, -1, 0));
+            }
+        }
+
+        WHEN("normal = local_normal_at(cyl, point(0, 1, 0.5))") {
+            auto normal = cyl->local_normal_at(point(0, 1, 0.5));
+            THEN("normal = vector(0, -1, 0)") {
+                REQUIRE(normal == vector(0, -1, 0));
+            }
+        }
+
+        WHEN("normal = local_normal_at(cyl, point(0, 2, 0))") {
+            auto normal = cyl->local_normal_at(point(0, 2, 0));
+            THEN("normal = vector(0, 1, 0)") {
+                REQUIRE(normal == vector(0, 1, 0));
+            }
+        }
+
+        WHEN("normal = local_normal_at(cyl, point(0.5, 2, 0))") {
+            auto normal = cyl->local_normal_at(point(0.5, 2, 0));
+            THEN("normal = vector(0, 1, 0)") {
+                REQUIRE(normal == vector(0, 1, 0));
+            }
+        }
+
+        WHEN("normal = local_normal_at(cyl, point(0, 2, 0.5))") {
+            auto normal = cyl->local_normal_at(point(0, 2, 0.5));
+            THEN("normal = vector(0, 1, 0)") {
+                REQUIRE(normal == vector(0, 1, 0));
             }
         }
     }

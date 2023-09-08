@@ -104,7 +104,7 @@ void set_transform(Shape_Ptr shape, const Matrix& m)
  *
  * @return Shape_Ptr
  */
-Shape_Ptr cone()
+Cone_Ptr cone()
 {
     auto ptr = std::make_shared<Cone>();
     ptr->transform = identity_matrix();
@@ -187,7 +187,7 @@ Tuple Cone::local_normal_at(const Tuple& pt) const
  *
  * @return Shape_Ptr
  */
-Shape_Ptr cube()
+Cube_Ptr cube()
 {
     auto ptr = std::make_shared<Cube>();
     ptr->transform = identity_matrix();
@@ -244,7 +244,7 @@ Tuple Cube::local_normal_at(const Tuple& pt) const
  *
  * @return Shape_Ptr
  */
-Shape_Ptr cylinder()
+Cylinder_Ptr cylinder()
 {
     auto ptr = std::make_shared<Cylinder>();
     ptr->transform = identity_matrix();
@@ -272,7 +272,6 @@ Intersections Cylinder::local_intersect(const Ray& ray)
 
     auto b = 2 * ray.origin.x * ray.direction.x + 2 * ray.origin.z * ray.direction.z;
     auto c = std::pow(ray.origin.x, 2) + std::pow(ray.origin.z, 2) - 1;
-
     auto disc = std::pow(b, 2) - 4 * a * c;
 
     // ray does not intersesect cylinder
@@ -281,6 +280,8 @@ Intersections Cylinder::local_intersect(const Ray& ray)
 
     auto t0 = (-b - std::sqrt(disc)) / (2 * a);
     auto t1 = (-b + std::sqrt(disc)) / (2 * a);
+    if (t0 > t1)
+        std::swap(t0, t1);
 
     auto y0 = ray.origin.y + t0 * ray.direction.y;
     if (minimum < y0 && y0 < maximum)
@@ -306,7 +307,7 @@ Tuple Cylinder::local_normal_at(const Tuple& pt) const
     auto dist = std::pow(pt.x, 2) + std::pow(pt.z, 2);
     if (dist < 1 && pt.y >= (maximum - EPSILON))
         return vector(0, 1, 0);
-    else if (dist < 1 && pt.y <= (maximum + EPSILON))
+    else if (dist < 1 && pt.y <= (minimum + EPSILON))
         return vector(0, -1, 0);
     else
         return vector(pt.x, 0, pt.z);
@@ -339,7 +340,7 @@ void Cylinder::intersect_caps(const Ray& ray, Intersections& xs)
  *
  * @return Shape_Ptr
  */
-Shape_Ptr plane()
+Plane_Ptr plane()
 {
     auto ptr = std::make_shared<Plane>();
     ptr->transform = identity_matrix();
@@ -382,7 +383,7 @@ Tuple Plane::local_normal_at(const Tuple& /*pt*/) const
  *
  * @return Shape_Ptr
  */
-Shape_Ptr sphere()
+Sphere_Ptr sphere()
 {
     auto ptr = std::make_shared<Sphere>();
     ptr->transform = identity_matrix();
@@ -396,7 +397,7 @@ Shape_Ptr sphere()
  *
  * @return Shape_Ptr
  */
-Shape_Ptr glass_sphere()
+Sphere_Ptr glass_sphere()
 {
     auto s = sphere();
     s->material->transparency = 1.0;

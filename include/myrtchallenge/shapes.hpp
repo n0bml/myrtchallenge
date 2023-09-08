@@ -74,14 +74,19 @@ struct Sphere : public Shape
 
 
 using Shape_Ptr = std::shared_ptr<Shape>;
+using Cone_Ptr = std::shared_ptr<Cone>;
+using Cube_Ptr = std::shared_ptr<Cube>;
+using Cylinder_Ptr = std::shared_ptr<Cylinder>;
+using Plane_Ptr = std::shared_ptr<Plane>;
+using Sphere_Ptr = std::shared_ptr<Sphere>;
 
 
-Shape_Ptr cone();
-Shape_Ptr cube();
-Shape_Ptr cylinder();
-Shape_Ptr plane();
-Shape_Ptr sphere();
-Shape_Ptr glass_sphere();
+Cone_Ptr cone();
+Cube_Ptr cube();
+Cylinder_Ptr cylinder();
+Plane_Ptr plane();
+Sphere_Ptr sphere();
+Sphere_Ptr glass_sphere();
 
 
 Intersections intersect(Shape_Ptr sphere, const Ray& ray);
