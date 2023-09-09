@@ -20,41 +20,97 @@
 
 
 SCENARIO("A ray intersects a cube.", "[cubes]") {
-    struct Test_Case {
-        Tuple origin;
-        Tuple direction;
-        double_t t1;
-        double_t t2;
-    };
-
-    std::vector<Test_Case> test_cases {
-        /* +x */     { point( 5,    0.5,  0), vector(-1,  0,  0),  4, 6 },
-        /* -x */     { point(-5,    0.5,  0), vector( 1,  0,  0),  4, 6 },
-        /* +y */     { point( 0.5,  5,    0), vector( 0, -1,  0),  4, 6 },
-        /* -y */     { point( 0.5, -5,    0), vector( 0,  1,  0),  4, 6 },
-        /* +z */     { point( 0.5,  0,    5), vector( 0,  0, -1),  4, 6 },
-        /* -z */     { point( 0.5,  0,   -5), vector( 0,  0,  1),  4, 6 },
-        /* inside */ { point( 0,    0.5,  0), vector( 0,  0,  1), -1, 1 },
-    };
-
     GIVEN("c <- cube()") {
         auto c = cube();
 
-        for (auto&& [origin, direction, t1, t2] : test_cases) {
-            WHEN("r <- ray(<origin>, <direction>)") {
-                auto r = ray(origin, direction);
-                AND_WHEN("xs <- local_intersect(c, r)") {
-                    auto xs = c->local_intersect(r);
-                    THEN("xs.count = 2") {
-                        REQUIRE(xs.size() == 2);
-                        AND_THEN("xs[0].t = <t1>") {
-                            REQUIRE(xs[0].t == t1);
-                            AND_THEN("xs[1] = <t2>") {
-                                REQUIRE(xs[1].t == t2);
-                            }
-                        }
-                    }
-                }
+        WHEN("xs <- local_intersect(c, ray(point(5, 0.5, 0), vector(-1, 0, 0)))") {
+            auto xs = c->local_intersect(ray(point(5, 0.5, 0), vector(-1, 0, 0)));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+            THEN("xs[0].t = 4") {
+                REQUIRE(xs[0].t == 4);
+            }
+            THEN("xs[1].t = 6") {
+                REQUIRE(xs[1].t == 6);
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(-5, 0.5, 0), vector(1, 0, 0)))") {
+            auto xs = c->local_intersect(ray(point(-5, 0.5, 0), vector(1, 0, 0)));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+            THEN("xs[0].t = 4") {
+                REQUIRE(xs[0].t == 4);
+            }
+            THEN("xs[1].t = 6") {
+                REQUIRE(xs[1].t == 6);
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(0.5, 5, 0), vector(0, -1, 0)))") {
+            auto xs = c->local_intersect(ray(point(0.5, 5, 0), vector(0, -1, 0)));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+            THEN("xs[0].t = 4") {
+                REQUIRE(xs[0].t == 4);
+            }
+            THEN("xs[1].t = 6") {
+                REQUIRE(xs[1].t == 6);
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(0.5, -5, 0), vector(0, 1, 0)))") {
+            auto xs = c->local_intersect(ray(point(0.5, -5, 0), vector(0, 1, 0)));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+            THEN("xs[0].t = 4") {
+                REQUIRE(xs[0].t == 4);
+            }
+            THEN("xs[1].t = 6") {
+                REQUIRE(xs[1].t == 6);
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(0.5, 0, 5), vector(0, 0, -1)))") {
+            auto xs = c->local_intersect(ray(point(0.5, 0, 5), vector(0, 0, -1)));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+            THEN("xs[0].t = 4") {
+                REQUIRE(xs[0].t == 4);
+            }
+            THEN("xs[1].t = 6") {
+                REQUIRE(xs[1].t == 6);
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(0.5, 0, -5), vector(0, 0, 1)))") {
+            auto xs = c->local_intersect(ray(point(0.5, 0, -5), vector(0, 0, 1)));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+            THEN("xs[0].t = 4") {
+                REQUIRE(xs[0].t == 4);
+            }
+            THEN("xs[1].t = 6") {
+                REQUIRE(xs[1].t == 6);
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(0, 0.5, 0), vector(0, 0, 1)))") {
+            auto xs = c->local_intersect(ray(point(0, 0.5, 0), vector(0, 0, 1)));
+            THEN("xs.count = 2") {
+                REQUIRE(xs.size() == 2);
+            }
+            THEN("xs[0].t = -1") {
+                REQUIRE(xs[0].t == -1);
+            }
+            THEN("xs[1].t = 1") {
+                REQUIRE(xs[1].t == 1);
             }
         }
     }
@@ -68,27 +124,56 @@ SCENARIO("A ray misses a cube.", "[cubes]") {
     };
 
     std::vector<Test_Case> test_cases {
-        { point(-2,  0,  0), vector(0.2673, 0.5345, 0.8018) },
-        { point( 0, -2,  0), vector(0.8018, 0.2673, 0.5345) },
-        { point( 0,  0, -2), vector(0.5345, 0.8018, 0.2673) },
-        { point( 2,  0,  2), vector( 0,  0, -1) },
-        { point( 0,  2,  2), vector( 0, -1,  0) },
-        { point( 2,  2,  0), vector(-1,  0,  0) },
     };
 
     GIVEN("c <- cube()") {
         auto c = cube();
 
-        for (auto&& [origin, direction] : test_cases) {
-            WHEN("r <- ray(<origin>, <direction>)") {
-                auto r = ray(origin, direction);
-                AND_WHEN("xs <- local_intersect(c, r)") {
-                    auto xs = c->local_intersect(r);
-                    THEN("xs.count = 0") {
-                        REQUIRE(xs.size() == 0);
-                        REQUIRE(xs.empty());
-                    }
-                }
+        WHEN("xs <- local_intersect(c, ray(point(-2, 0, 0), vector(0.2673, 0.5345, 0.8018)))") {
+            auto xs = c->local_intersect(ray(point(-2, 0, 0), vector(0.2673, 0.5345, 0.8018)));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(0, -2, 0), vector(0.8018, 0.2673, 0.5345)))") {
+            auto xs = c->local_intersect(ray(point(0, -2, 0), vector(0.8018, 0.2673, 0.5345)));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(0, 0, -2), vector(0.5345, 0.8018, 0.2673)))") {
+            auto xs = c->local_intersect(ray(point(0, 0, -2), vector(0.5345, 0.8018, 0.2673)));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(2, 0, 2), vector(0, 0, -1)))") {
+            auto xs = c->local_intersect(ray(point(2, 0, 2), vector(0, 0, -1)));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(0, 2, 2), vector(0, -1, 0)))") {
+            auto xs = c->local_intersect(ray(point(0, 2, 2), vector(0, -1, 0)));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
+            }
+        }
+
+        WHEN("xs <- local_intersect(c, ray(point(2, 2, 0), vector(-1, 0, 0)))") {
+            auto xs = c->local_intersect(ray(point(2, 2, 0), vector(-1, 0, 0)));
+            THEN("xs.count = 0") {
+                REQUIRE(xs.size() == 0);
+                REQUIRE(xs.empty());
             }
         }
     }
@@ -96,31 +181,62 @@ SCENARIO("A ray misses a cube.", "[cubes]") {
 
 
 SCENARIO("The normal on the surface of a cube.", "[cubes]") {
-    struct Test_Case {
-        Tuple pt;
-        Tuple tnormal;
-    };
-
-    std::vector<Test_Case> test_cases {
-        { point( 1,    0.5, -0.8), vector( 1, 0,  0) },
-        { point(-1,   -0.2,  0.9), vector(-1, 0,  0) },
-        { point(-0.4,  1,   -0.1), vector( 0, 1,  0) },
-        { point( 0.3, -1,   -0.7), vector( 0, 1,  0) },
-        { point(-0.6,  0.3,  1),   vector( 0, 0,  1) },
-        { point( 0.4,  0.4, -1),   vector( 0, 0, -1) },
-        { point( 1,    1,    1),   vector( 1, 0,  0) },
-        { point(-1,   -1,   -1),   vector(-1, 0,  0) }
-    };
-
     GIVEN("c <- cube()") {
         auto c = cube();
 
-        for (auto&& [pt, tnormal] : test_cases) {
-            WHEN("normal <- local_normal(c, <pt>)") {
-                auto normal = c->local_normal_at(pt);
-                THEN("normal = <normal>") {
-                    REQUIRE(normal == tnormal);
-                }
+        WHEN("normal <- local_normal_at(c, point(1, 0.5, -0.8))") {
+            auto normal = c->local_normal_at(point(1, 0.5, -0.8));
+            THEN("normal = vector(1, 0, 0)") {
+                REQUIRE(normal == vector(1, 0, 0));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(c, point(-1, -0.2, 0.9))") {
+            auto normal = c->local_normal_at(point(-1, -0.2, -0.9));
+            THEN("normal = vector(-1, 0, 0)") {
+                REQUIRE(normal == vector(-1, 0, 0));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(c, point(-0.4, 1, -0.1))") {
+            auto normal = c->local_normal_at(point(-0.4, 1, -0.1));
+            THEN("normal = vector(0, 1, 0)") {
+                REQUIRE(normal == vector(0, 1, 0));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(c, point(0.3, -1, -0.7))") {
+            auto normal = c->local_normal_at(point(0.3, -1, -0.7));
+            THEN("normal = vector(0, -1, 0)") {
+                REQUIRE(normal == vector(0, -1, 0));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(c, point(-0.6, 0.3, 1))") {
+            auto normal = c->local_normal_at(point(-0.6, 0.3, 1));
+            THEN("normal = vector(0, 0, 1)") {
+                REQUIRE(normal == vector(0, 0, 1));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(c, point(0.4, 0.4, -1))") {
+            auto normal = c->local_normal_at(point(0.4, 0.4, -1));
+            THEN("normal = vector(0, 0, -1)") {
+                REQUIRE(normal == vector(0, 0, -1));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(c, point(1, 1, 1))") {
+            auto normal = c->local_normal_at(point(1, 1, 1));
+            THEN("normal = vector(1, 0, 0)") {
+                REQUIRE(normal == vector(1, 0, 0));
+            }
+        }
+
+        WHEN("normal <- local_normal_at(c, point(-1, -1, -1))") {
+            auto normal = c->local_normal_at(point(-1, -1, -1));
+            THEN("normal = vector(-1, 0, 0)") {
+                REQUIRE(normal == vector(-1, 0, 0));
             }
         }
     }

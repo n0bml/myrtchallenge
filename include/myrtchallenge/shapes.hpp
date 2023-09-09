@@ -38,6 +38,27 @@ struct Cube : public Shape
 };
 
 
+struct Cylinder : public Shape
+{
+    double_t minimum{-INFINITY};
+    double_t maximum{INFINITY};
+    bool closed{false};
+
+    Intersections local_intersect(const Ray& ray);
+    Tuple local_normal_at(const Tuple& point) const;
+
+    void intersect_caps(const Ray& ray, Intersections& xs);
+};
+
+
+// a cone is a special form of a cylinder
+struct Cone : public Cylinder
+{
+    Intersections local_intersect(const Ray& ray);
+    Tuple local_normal_at(const Tuple& point) const;
+};
+
+
 struct Plane : public Shape
 {
     Intersections local_intersect(const Ray& ray);
@@ -53,12 +74,19 @@ struct Sphere : public Shape
 
 
 using Shape_Ptr = std::shared_ptr<Shape>;
+using Cone_Ptr = std::shared_ptr<Cone>;
+using Cube_Ptr = std::shared_ptr<Cube>;
+using Cylinder_Ptr = std::shared_ptr<Cylinder>;
+using Plane_Ptr = std::shared_ptr<Plane>;
+using Sphere_Ptr = std::shared_ptr<Sphere>;
 
 
-Shape_Ptr cube();
-Shape_Ptr plane();
-Shape_Ptr sphere();
-Shape_Ptr glass_sphere();
+Cone_Ptr cone();
+Cube_Ptr cube();
+Cylinder_Ptr cylinder();
+Plane_Ptr plane();
+Sphere_Ptr sphere();
+Sphere_Ptr glass_sphere();
 
 
 Intersections intersect(Shape_Ptr sphere, const Ray& ray);
