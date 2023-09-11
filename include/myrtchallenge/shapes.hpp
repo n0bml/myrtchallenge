@@ -107,6 +107,8 @@ Sphere_Ptr glass_sphere();
 
 
 void add_child(Group_Ptr group, Shape_Ptr shape);
-Intersections intersect(Shape_Ptr sphere, const Ray& ray);
-Tuple normal_at(Shape_Ptr sphere, const Tuple& point);
+Intersections intersect(Shape_Ptr shape, const Ray& ray);
+Tuple normal_at(Shape_Ptr sphere, const Tuple& world_point);
+Tuple normal_to_world(const Shape_Ptr& shape, const Tuple& normal);
 void set_transform(Shape_Ptr sphere, const Matrix& m);
+Tuple world_to_object(const Shape_Ptr& shape, const Tuple& point);

@@ -86,16 +86,33 @@ Intersections intersect(Shape_Ptr shape, const Ray& ray)
  * @brief Return the normal at the given point on the shape.
  *
  * @param shape
- * @param point
+ * @param world_point
  * @return Tuple
  */
-Tuple normal_at(Shape_Ptr shape, const Tuple& point)
+Tuple normal_at(Shape_Ptr shape, const Tuple& world_point)
 {
-    auto local_point = inverse(shape->transform) * point;
+    auto local_point = world_to_object(shape, world_point);
     auto local_normal = shape->local_normal_at(local_point);
-    auto world_normal = transpose(inverse(shape->transform)) * local_normal;
-    world_normal.w = 0;
-    return normalize(world_normal);
+    return normal_to_world(shape, local_normal);
+}
+
+
+/**
+ * @brief Convert a normal from object space to world space.
+ * 
+ * @param shape
+ * @param normal
+ * @return Tuple
+ */
+Tuple normal_to_world(const Shape_Ptr& shape, const Tuple& normal)
+{
+    auto n = transpose(inverse(shape->transform)) * normal;
+    n.w = 0;
+    n = normalize(n);
+    if (shape->parent) {
+        n = normal_to_world(shape->parent, n);
+    }
+    return n;
 }
 
 
@@ -108,6 +125,22 @@ Tuple normal_at(Shape_Ptr shape, const Tuple& point)
 void set_transform(Shape_Ptr shape, const Matrix& m)
 {
     shape->transform = m;
+}
+
+/**
+ * @brief Convert a point from world space to object space.
+ * 
+ * @param shape - The shape defining the object space.
+ * @param point - The point in world space.
+ * @return Tuple - The point in ojbect space.
+*/
+Tuple world_to_object(const Shape_Ptr& shape, const Tuple& point)
+{
+    auto pt = point;
+    if (shape->parent) {
+        pt = world_to_object(shape->parent, point);    
+    }
+    return inverse(shape->transform) * pt;
 }
 
 
@@ -387,6 +420,7 @@ Intersections Group::local_intersect(const Ray& ray)
  */
 Tuple Group::local_normal_at(const Tuple& /*pt*/) const
 {
+    throw std::runtime_error("Error calling local_normal_at for a group.");
     return vector(0, 1, 0);
 }
 

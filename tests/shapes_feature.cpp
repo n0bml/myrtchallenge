@@ -151,3 +151,78 @@ SCENARIO("Computing the normal on a transformed shape.", "[shapes]") {
         }
     }
 }
+
+
+SCENARIO("Converting a point from world to object space.", "[shapes]") {
+    GIVEN("g1 <- group()") {
+        auto g1 = group();
+        AND_GIVEN("set_transform(g1, rotation_y(pi/2))") {
+            set_transform(g1, rotation_y(M_PI_2));
+        AND_GIVEN("g2 <- group()") {
+            auto g2 = group();
+        AND_GIVEN("set_transform(g2, scaling(2, 2, 2))") {
+            set_transform(g2, scaling(2, 2, 2));
+        AND_GIVEN("add_child(g1, g2)") {
+            add_child(g1, g2);
+        AND_GIVEN("s <- sphere()") {
+            auto s = sphere();
+        AND_GIVEN("set_transform(s, translation(5, 0, 0))") {
+            set_transform(s, translation(5, 0, 0));
+        AND_GIVEN("add_child(g2, s)") {
+            add_child(g2, s);
+    WHEN("p <- world_to_object(s, point(-2, 0, -10))") {
+        auto p = world_to_object(s, point(-2, 0, -10));
+    THEN("p = point(0, 0, -1)") {
+        REQUIRE(p == point(0, 0, -1));
+    }}}}}}}}}}
+}
+
+
+SCENARIO("Converting a normal from object to world space.", "[shapes]") {
+    GIVEN("g1 <- group()") {
+        auto g1 = group();
+        AND_GIVEN("set_transform(g1, rotation_y(pi/2))") {
+            set_transform(g1, rotation_y(M_PI_2));
+        AND_GIVEN("g2 <- group()") {
+            auto g2 = group();
+        AND_GIVEN("set_transform(g2, scaling(1, 2, 3))") {
+            set_transform(g2, scaling(1, 2, 3));
+        AND_GIVEN("add_child(g1, g2)") {
+            add_child(g1, g2);
+        AND_GIVEN("s <- sphere()") {
+            auto s = sphere();
+        AND_GIVEN("set_transform(s, translation(5, 0, 0))") {
+            set_transform(s, translation(5, 0, 0));
+        AND_GIVEN("add_child(g2, s)") {
+            add_child(g2, s);
+    WHEN("n <- normal_to_world(s, vector(√3/3, √3/3, √3/3))") {
+        auto n = normal_to_world(s, vector(std::sqrt(3) / 3, std::sqrt(3) / 3, std::sqrt(3) / 3));
+    THEN("n = vector(0.2857, 0.4286, -0.8571)") {
+        REQUIRE(n == vector(0.28571, 0.42857, -0.85714));
+    }}}}}}}}}}
+}
+
+
+SCENARIO("Finding the normal on a child object.", "[shapes]") {
+    GIVEN("g1 <- group()") {
+        auto g1 = group();
+        AND_GIVEN("set_transform(g1, rotation(pi/2))") {
+            set_transform(g1, rotation_y(M_PI_2));
+        AND_GIVEN("g2 <- group()") {
+            auto g2 = group();
+        AND_GIVEN("set_transform(g2, scaling(1, 2, 3))") {
+            set_transform(g2, scaling(1, 2, 3));
+        AND_GIVEN("add_child(g1, g2)") {
+            add_child(g1, g2);
+        AND_GIVEN("s <- sphere()") {
+            auto s = sphere();
+        AND_GIVEN("set_transform(s, translation(5, 0, 0))") {
+            set_transform(s, translation(5, 0, 0));
+        AND_GIVEN("add_child(g2, s)") {
+            add_child(g2, s);
+    WHEN("n <- normal_at(s, point(1.7321, 1.1547, -5.5774))") {
+        auto n = normal_at(s, point(1.7321, 1.1547, -5.5774));
+    THEN("n = vector(0.2857, 0.4286, -0.8571)") {
+        REQUIRE(n == vector(0.28570, 0.42854, -0.85716));
+    }}}}}}}}}}
+}
