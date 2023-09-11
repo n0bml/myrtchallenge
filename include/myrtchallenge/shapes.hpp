@@ -23,6 +23,7 @@ struct Shape : std::enable_shared_from_this<Shape>
 
     Matrix transform;
     Material_Ptr material;
+    std::shared_ptr<Shape> parent;
 
     bool operator==(const Shape& rhs) const;
 
@@ -59,6 +60,20 @@ struct Cone : public Cylinder
 };
 
 
+struct Group : public Shape
+{
+    std::vector<Shape_Ptr> members;
+
+    Group() : members() {}
+
+    Intersections local_intersect(const Ray& ray);
+    Tuple local_normal_at(const Tuple& pt) const;
+
+    bool empty() const;
+    bool includes(const Shape_Ptr& shape) const;
+};
+
+
 struct Plane : public Shape
 {
     Intersections local_intersect(const Ray& ray);
@@ -77,6 +92,7 @@ using Shape_Ptr = std::shared_ptr<Shape>;
 using Cone_Ptr = std::shared_ptr<Cone>;
 using Cube_Ptr = std::shared_ptr<Cube>;
 using Cylinder_Ptr = std::shared_ptr<Cylinder>;
+using Group_Ptr = std::shared_ptr<Group>;
 using Plane_Ptr = std::shared_ptr<Plane>;
 using Sphere_Ptr = std::shared_ptr<Sphere>;
 
@@ -84,11 +100,13 @@ using Sphere_Ptr = std::shared_ptr<Sphere>;
 Cone_Ptr cone();
 Cube_Ptr cube();
 Cylinder_Ptr cylinder();
+Group_Ptr group();
 Plane_Ptr plane();
 Sphere_Ptr sphere();
 Sphere_Ptr glass_sphere();
 
 
+void add_child(Group_Ptr group, Shape_Ptr shape);
 Intersections intersect(Shape_Ptr sphere, const Ray& ray);
 Tuple normal_at(Shape_Ptr sphere, const Tuple& point);
 void set_transform(Shape_Ptr sphere, const Matrix& m);

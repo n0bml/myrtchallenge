@@ -55,6 +55,18 @@ bool Shape::operator==(const Shape& rhs) const
 
 
 /**
+ * @brief Add a shape to the group.
+ * 
+ * @param shape
+ */
+void add_child(Group_Ptr group, Shape_Ptr shape)
+{
+    group->members.push_back(shape);
+    shape->parent = std::static_pointer_cast<Shape>(group);
+}
+
+
+/**
  * @brief Return the intersections between the given ray and the shape.
  *
  * @param shape
@@ -336,9 +348,75 @@ void Cylinder::intersect_caps(const Ray& ray, Intersections& xs)
 
 
 /**
+ * @brief Construct and return a shared pointer to an empty Group.
+ * 
+ * @return Group_Ptr
+ */
+Group_Ptr group()
+{
+    auto ptr = std::make_shared<Group>();
+    ptr->transform = identity_matrix();
+    ptr->material = material();
+    return ptr;
+}
+
+
+/**
+ * @brief Return the intersections between the ray and the Group.
+ *
+ * @param ray
+ * @return Intersections
+ */
+Intersections Group::local_intersect(const Ray& ray)
+{
+    Intersections results;
+    for (auto& shape : members) {
+        auto xs = intersect(shape, ray);
+        results.insert(std::end(results), std::begin(xs), std::end(xs));
+    }
+    std::sort(std::begin(results), std::end(results));
+    return results;
+}
+
+
+/**
+ * @brief Return the local normal at the given point.
+ *
+ * @param pt - unused
+ * @return Tuple
+ */
+Tuple Group::local_normal_at(const Tuple& /*pt*/) const
+{
+    return vector(0, 1, 0);
+}
+
+
+/**
+ * @brief Does the Group have any members?
+ * 
+ * @return bool
+ */
+bool Group::empty() const
+{
+    return members.empty();
+}
+
+
+/**
+ * @brief Does the group contain the given shape?
+ * 
+ * @return bool
+ */
+bool Group::includes(const Shape_Ptr& shape) const
+{
+    return std::find(std::begin(members), std::end(members), shape) != std::end(members);
+}
+
+
+/**
  * @brief Construct and return a shared pointer to a Plane.
  *
- * @return Shape_Ptr
+ * @return Plane_Ptr
  */
 Plane_Ptr plane()
 {

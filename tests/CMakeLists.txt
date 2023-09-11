@@ -33,6 +33,11 @@ target_compile_features(canvas_feature PRIVATE cxx_std_20)
 target_link_libraries(canvas_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
 add_test(NAME canvas_feature COMMAND canvas_feature)
 
+add_executable(groups_feature groups_feature.cpp)
+target_compile_features(groups_feature PRIVATE cxx_std_20)
+target_link_libraries(groups_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)
+add_test(NAME groups_feature COMMAND groups_feature)
+
 add_executable(intersections_feature intersections_feature.cpp)
 target_compile_features(intersections_feature PRIVATE cxx_std_20)
 target_link_libraries(intersections_feature PRIVATE myrtchallenge Catch2::Catch2WithMain)

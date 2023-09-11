@@ -6,7 +6,7 @@ Buck](http://weblog.jamisbuck.org).
 
 ## Author
 
-- Brendan Leber <brendan@brendanleber.com>
+- Brendan Leber <n0bml@brendanleber.com>
 
 ## License
 
