@@ -4,10 +4,11 @@
  * @file include/myrtchallenge/shapes.hpp
  * @brief Declaration of shape classes and support functions.
  * @author Brendan Leber <brendan@brendanleber.com>
- * @copyright Copyright 2022 by Brendan Leber.  Some rights reserved, see LICENSE.
+ * @copyright Copyright 2022-23 by Brendan Leber.  Some rights reserved, see LICENSE.
  */
 
 #include <cmath>
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -15,6 +16,23 @@
 #include "myrtchallenge/materials.hpp"
 #include "myrtchallenge/matrices.hpp"
 #include "myrtchallenge/rays.hpp"
+
+
+struct Bounds
+{
+    Tuple lower{point(std::numeric_limits<double_t>::infinity(), std::numeric_limits<double_t>::infinity(), std::numeric_limits<double_t>::infinity())};
+    Tuple upper{point(-std::numeric_limits<double_t>::infinity(), -std::numeric_limits<double_t>::infinity(), -std::numeric_limits<double_t>::infinity())};
+
+    void add(const Tuple& pt);
+    void add(const Bounds& box);
+
+    bool contains(const Tuple& pt) const;
+    bool contains(const Bounds& box) const;
+
+    bool intersects(const Ray& ray) const;
+    Bounds transform(const Matrix& mat) const;
+    std::tuple<Bounds, Bounds> split() const;
+};
 
 
 struct Shape : std::enable_shared_from_this<Shape>
@@ -27,6 +45,9 @@ struct Shape : std::enable_shared_from_this<Shape>
 
     bool operator==(const Shape& rhs) const;
 
+    Bounds parent_space_bounds_of() const;
+
+    virtual Bounds local_bounds() const = 0;
     virtual Intersections local_intersect(const Ray& ray) = 0;
     virtual Tuple local_normal_at(const Tuple& point) const = 0;
 };
@@ -34,6 +55,7 @@ struct Shape : std::enable_shared_from_this<Shape>
 
 struct Cube : public Shape
 {
+    Bounds local_bounds() const;
     Intersections local_intersect(const Ray& ray);
     Tuple local_normal_at(const Tuple& point) const;
 };
@@ -45,6 +67,7 @@ struct Cylinder : public Shape
     double_t maximum{INFINITY};
     bool closed{false};
 
+    Bounds local_bounds() const;
     Intersections local_intersect(const Ray& ray);
     Tuple local_normal_at(const Tuple& point) const;
 
@@ -55,6 +78,7 @@ struct Cylinder : public Shape
 // a cone is a special form of a cylinder
 struct Cone : public Cylinder
 {
+    Bounds local_bounds() const;
     Intersections local_intersect(const Ray& ray);
     Tuple local_normal_at(const Tuple& point) const;
 };
@@ -66,6 +90,7 @@ struct Group : public Shape
 
     Group() : members() {}
 
+    Bounds local_bounds() const;
     Intersections local_intersect(const Ray& ray);
     Tuple local_normal_at(const Tuple& pt) const;
 
@@ -76,6 +101,7 @@ struct Group : public Shape
 
 struct Plane : public Shape
 {
+    Bounds local_bounds() const;
     Intersections local_intersect(const Ray& ray);
     Tuple local_normal_at(const Tuple& pt) const;
 };
@@ -83,6 +109,7 @@ struct Plane : public Shape
 
 struct Sphere : public Shape
 {
+    Bounds local_bounds() const;
     Intersections local_intersect(const Ray& ray);
     Tuple local_normal_at(const Tuple& point) const;
 };
@@ -97,6 +124,7 @@ using Plane_Ptr = std::shared_ptr<Plane>;
 using Sphere_Ptr = std::shared_ptr<Sphere>;
 
 
+Bounds bounds();
 Cone_Ptr cone();
 Cube_Ptr cube();
 Cylinder_Ptr cylinder();
@@ -107,6 +135,7 @@ Sphere_Ptr glass_sphere();
 
 
 void add_child(Group_Ptr group, Shape_Ptr shape);
+Bounds bounds(const Shape_Ptr& shape);
 Intersections intersect(Shape_Ptr shape, const Ray& ray);
 Tuple normal_at(Shape_Ptr sphere, const Tuple& world_point);
 Tuple normal_to_world(const Shape_Ptr& shape, const Tuple& normal);

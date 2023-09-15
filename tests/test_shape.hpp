@@ -16,14 +16,16 @@ struct Test_Shape : public Shape
 {
     Ray saved_ray{point(0, 0, 0), vector(0, 0, 0)};
 
-    Intersections local_intersect(const Ray& ray)
-    {
+    Bounds local_bounds() const {
+        return Bounds{point(-1, -1, -1), point(1, 1, 1)};
+    }
+
+    Intersections local_intersect(const Ray& ray) {
         saved_ray = ray;
         return Intersections{};
     }
 
-    Tuple local_normal_at(const Tuple& point) const
-    {
+    Tuple local_normal_at(const Tuple& point) const {
         return vector(point.x, point.y, point.z);
     }
 };

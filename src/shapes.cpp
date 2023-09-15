@@ -2,36 +2,17 @@
  * @file src/shapes.cpp
  * @brief Definition of shape base class and support functions.
  * @author Brendan Leber <brendan@brendanleber.com>
- * @copyright Copyright 2022 by Brendan Leber.  Some rights reserved, see LICENSE.
+ * @copyright Copyright 2022-23 by Brendan Leber.  Some rights reserved, see LICENSE.
  */
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 
+#include "myrtchallenge/matrices.hpp"
 #include "myrtchallenge/shapes.hpp"
 
 #include "primitives.hpp"
-
-
-std::pair<double_t, double_t> check_axis(double_t origin, double_t direction)
-{
-    auto tmin_numerator = (-1 - origin);
-    auto tmax_numerator = ( 1 - origin);
-
-    double_t tmin, tmax;
-    if (std::fabs(direction) >= EPSILON) {
-        tmin = tmin_numerator / direction;
-        tmax = tmax_numerator / direction;
-    } else {
-        tmin = tmin_numerator * INFINITY;
-        tmax = tmax_numerator * INFINITY;
-    }
-
-    if (tmin > tmax)
-        std::swap(tmin, tmax);
-
-    return std::make_pair(tmin, tmax);
-}
 
 
 bool check_cap(const Ray& ray, double_t t)
@@ -54,6 +35,12 @@ bool Shape::operator==(const Shape& rhs) const
 }
 
 
+Bounds Shape::parent_space_bounds_of() const
+{
+    return local_bounds().transform(transform);
+}
+
+
 /**
  * @brief Add a shape to the group.
  * 
@@ -63,6 +50,166 @@ void add_child(Group_Ptr group, Shape_Ptr shape)
 {
     group->members.push_back(shape);
     shape->parent = std::static_pointer_cast<Shape>(group);
+}
+
+
+/**
+ * @brief Construct a new empty bounding box.
+ */
+Bounds bounds()
+{
+    return Bounds{};
+}
+
+
+/**
+ * @brief Counstruct a new bounding box for a shape.
+ * 
+ * @param shape
+ * @return Bounds
+ */
+Bounds bounds(const Shape_Ptr& shape)
+{
+    return shape->local_bounds();
+}
+
+
+/**
+ * @brief Add a point to the bounding box.
+ *
+ * @param pt
+ */
+void Bounds::add(const Tuple& pt)
+{
+    lower.x = std::min(lower.x, pt.x);
+    lower.y = std::min(lower.y, pt.y);
+    lower.z = std::min(lower.z, pt.z);
+
+    upper.x = std::max(upper.x, pt.x);
+    upper.y = std::max(upper.y, pt.y);
+    upper.z = std::max(upper.z, pt.z);
+}
+
+
+/**
+ * @brief Add a bounding box to this bounding box.
+ *
+ * @param box
+ */
+void Bounds::add(const Bounds& box)
+{
+    add(box.lower);
+    add(box.upper);
+}
+
+
+/**
+ * @brief Return true if `point` is inside the bounding box.
+ *
+ * @param pt
+ * @returns True if `pt` is inside this bounding box.
+ */
+bool Bounds::contains(const Tuple& pt) const
+{
+    return (lower.x <= pt.x && pt.x <= upper.x)
+        && (lower.y <= pt.y && pt.y <= upper.y)
+        && (lower.z <= pt.z && pt.z <= upper.z);
+}
+
+
+/**
+ * @brief Return true if `box` is inside the bounding box.
+ *
+ * @param box
+ * @returns True if `box` is inside this bounding box.
+ */
+bool Bounds::contains(const Bounds& box) const
+{
+    return contains(box.lower) && contains(box.upper);
+}
+
+
+/**
+ * @brief Does the ray intersect the bounding box?
+ *
+ * @param ray
+ * @returns True if the ray intersects this bounding box.
+ */
+bool Bounds::intersects(const Ray& ray) const
+{
+    auto [xmin, xmax] = check_axis(ray.origin.x, ray.direction.x, lower.x, upper.x);
+    auto [ymin, ymax] = check_axis(ray.origin.y, ray.direction.y, lower.y, upper.y);
+    auto [zmin, zmax] = check_axis(ray.origin.z, ray.direction.z, lower.z, upper.z);
+
+    auto tmin = std::max({xmin, ymin, zmin});
+    auto tmax = std::min({xmax, ymax, zmax});
+    if (tmin <= tmax)
+        return true;
+    return false;
+}
+
+
+/**
+ * @brief Split the bounding box into two.
+ *
+ * @returns Bounds, Bounds the two fractional bounding boxes.
+*/
+std::tuple<Bounds, Bounds> Bounds::split() const
+{
+    auto dx = upper.x - lower.x;
+    auto dy = upper.y - lower.y;
+    auto dz = upper.z - lower.z;
+
+    auto greatest = std::max({dx, dy, dz});
+
+    auto x0 = lower.x;
+    auto y0 = lower.y;
+    auto z0 = lower.z;
+
+    auto x1 = upper.x;
+    auto y1 = upper.y;
+    auto z1 = upper.z;
+
+    if (greatest == dx)
+        x0 = x1 = x0 + dx / 2;
+    else if (greatest == dy)
+        y0 = y1 = y0 + dy / 2;
+    else
+        z0 = z1 = z0 + dz / 2;
+
+    auto mid_min = point(x0, y0, z0);
+    auto mid_max = point(x1, y1, z1);
+
+    Bounds left{lower, mid_max};
+    Bounds right{mid_min, upper};
+
+    return std::make_tuple(left, right);
+}
+
+
+/**
+ * @brief Transform the bounding box with the given transformation matrix.
+ *
+ * @param mat
+ * @returns The transformed bounding box
+ */
+Bounds Bounds::transform(const Matrix& mat) const
+{
+    std::array<Tuple, 8> points = {
+        lower,
+        point(lower.x, lower.y, upper.z),
+        point(lower.x, upper.y, lower.z),
+        point(lower.x, upper.y, upper.z),
+        point(upper.x, lower.y, lower.z),
+        point(upper.x, lower.y, upper.z),
+        point(upper.x, upper.x, lower.z),
+        upper,
+    };
+
+    Bounds new_box;
+    for (auto const& pt : points)
+        new_box.add(mat * pt);
+    return new_box;
 }
 
 
@@ -158,6 +305,13 @@ Cone_Ptr cone()
 }
 
 
+Bounds Cone::local_bounds() const
+{
+    auto limit = std::max(std::fabs(minimum), std::fabs(maximum));
+    return Bounds{point(-limit, minimum, -limit), point(limit, maximum, limit)};
+}
+
+
 /**
  * @brief Return the intersections between the ray and the Cone.
  *
@@ -241,6 +395,12 @@ Cube_Ptr cube()
 }
 
 
+Bounds Cube::local_bounds() const
+{
+    return Bounds{point(-1, -1, -1), point(1, 1, 1)};
+}
+
+
 /**
  * @brief Return the intersections between the ray and the Cube.
  *
@@ -295,6 +455,17 @@ Cylinder_Ptr cylinder()
     ptr->transform = identity_matrix();
     ptr->material = material();
     return ptr;
+}
+
+
+Bounds Cylinder::local_bounds() const
+{
+    Bounds box{point(-1, -INFINITY, -1), point(1, INFINITY, 1)};
+    if (minimum != -INFINITY)
+        box.lower.y = minimum;
+    if (maximum != INFINITY)
+        box.upper.y = maximum;
+    return box;
 }
 
 
@@ -394,6 +565,17 @@ Group_Ptr group()
 }
 
 
+Bounds Group::local_bounds() const
+{
+    Bounds box;
+    for (auto const& shape : members) {
+        auto sbox = shape->parent_space_bounds_of();
+        box.add(sbox);
+    }
+    return box;
+}
+
+
 /**
  * @brief Return the intersections between the ray and the Group.
  *
@@ -461,6 +643,12 @@ Plane_Ptr plane()
 }
 
 
+Bounds Plane::local_bounds() const
+{
+    return Bounds{point(-INFINITY, 0, -INFINITY), point(INFINITY, 0, INFINITY)};
+}
+
+
 /**
  * @brief Return the intersections between the ray and the Plane.
  *
@@ -516,6 +704,13 @@ Sphere_Ptr glass_sphere()
     s->material->refractive_index = 1.5;
     return s;
 }
+
+
+Bounds Sphere::local_bounds() const
+{
+    return Bounds{point(-1, -1, -1), point(1, 1, 1)};
+}
+
 
 /**
  * @brief Return the intersections between the ray and the Sphere.

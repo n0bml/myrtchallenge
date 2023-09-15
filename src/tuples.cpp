@@ -104,6 +104,7 @@ Tuple normalize(const Tuple& tpl)
     return tuple(tpl.x / mag, tpl.y / mag, tpl.z / mag, tpl.w / mag);
 }
 
+
 Tuple reflect(const Tuple& in, const Tuple& normal)
 {
     return in - normal * 2 * dot(in, normal);
